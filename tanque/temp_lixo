@@ -1,0 +1,196 @@
+  //processing.frameRate(30);
+        
+        //var xPos = 16*6;
+        //var yPos = 16*6;
+    
+        // PLAYER
+        // enum do level do jogador
+        //var EnumPlayerUpdates = new Enum("L1","L2","L3","L4");        
+       
+        //will be used to store sprites
+        //var tileSprites = {}; 
+        //var playerSprites = {};
+        
+        
+        // INPUT
+        //var action = new Enum("up","down", "left", "right" , "fire");
+        //creating keymap. It associates keycodes with actions. 
+        //var keymap = {};
+
+      
+        
+        //Primary                      //Secondary                                  //You can add up as many keyboard alternatives you want, it "just works"
+        //keymap[UP] = action.up;         keymap["W".charCodeAt(0)] = action.up;       keymap["I".charCodeAt(0)] = action.up;
+        //keymap[DOWN] = action.down;     keymap["S".charCodeAt(0)] = action.down;     keymap["K".charCodeAt(0)] = action.down;
+        //keymap[RIGHT] = action.right;   keymap["D".charCodeAt(0)] = action.right;    keymap["L".charCodeAt(0)] = action.right;
+        //keymap[LEFT] = action.left;     keymap["A".charCodeAt(0)] = action.left;     keymap["J".charCodeAt(0)] = action.left;
+        //keymap[ENTER] = action.fire;    keymap[" ".charCodeAt(0)] = action.fire;     //no terciary bind for fire.
+        
+        //NO: ------ In the future, several player input can be made using one action enum variable for each player. Ex, var player1Actions = new Enum("up","down","etc..").
+        //YES: maybe have just one action enum, and do a keymap with more inputs, like keymap[UP] = [inputP1,action.up]
+        //      then, keybings will also recieve the input "context", and change them the same way :)
+        //      keybinding[action.up] = function(inputContext,pressed){inputContext.x += 1}
+        
+        //var input = {x:0,y:0,fire:false};
+        
+        //loucura: PORRA, BABEI SANGUE AGORA!
+        //Keybindings are the functions that are called ONCE on PHYSICAL key press (With no repeat from the OS) AND key release
+        //pressed = true -> key pressed; pressed = false -> key released
+        //var keybinding = {};
+        /*
+        keybinding[action.up] = function(pressed){
+            input.y -= pressed ? 1 : -1 ; 
+        }; 
+        keybinding[action.down] = function(pressed){
+            input.y += pressed ? 1 : -1 ;
+        }; 
+        keybinding[action.left] = function(pressed){
+            input.x -= pressed ? 1 : -1 ;
+        }; 
+        keybinding[action.right] = function(pressed){
+            input.x += pressed ? 1 : -1 ;
+        }; 
+        keybinding[action.fire] = function(pressed){
+            input.fire = pressed;
+        }; 
+        */
+        
+        //boolean map containing true for each ACTION key cuyrrently being pressed. Ex: keypressedMap[action.up] -> false
+        
+        
+        
+        
+        
+        
+        ==============================>>>>>>>>>>>>>>>>
+            
+                    
+                    
+                   /* playerSpriteSheet.setAllSprites( new Enum( "field1", "field2" , "goal1" , "goal2" ,  "star1",  "star2",  "star3",  "star4", "player1lvl1up1"));*/
+                   
+                      
+                    //playerSpriteSheet.defineSpriteNames(new Enum("playerUp","playerUp1","playerUp2","playerRight","playerDown","playerLeft"));
+                    //with (playerSpriteSheet.spriteNames){
+                    //    playerSpriteSheet.setSprite(0,1,playerUp1);  //Na verdade os nomes nao servem pra nada... podia ser uma string, ou um integer aqui... repensar essa bosta 
+                    //    playerSpriteSheet.setSprite(4,1,playerUp2);
+                       
+                    //}
+
+        
+       
+       
+       
+       /*
+            //automatically generates sprites: 
+            if (cenarySprite.loaded ){
+            
+                if (!tileSpritesCreated){
+                    tileSpritesCreated = true;
+                    for (var type in EnumMapTiles) {
+                        // QUE MALANDRAGEM ESSE NEGÓCIO DE GET AÍ
+                        tileSprites[type] = cenarySprite.get(  0*EnumTilesSize.x,0*EnumTilesSize.y,
+                                                                EnumTilesSize.x, EnumTilesSize.y);
+                    }
+                    console.log(tileSprites);
+                }
+                
+                
+            }else{
+                //if sprite is not yet loaded, dont do anything
+                // use preloaded images with @pjs?
+                console.log("nao deu");
+                return;
+            }*/
+        
+/*
+            //EnumMapTiles = new Enum("NONE","BRICK", "STEEL", "GRASS", "WATER_1", "WATER_2", "SNOW");//Enum -> util.js --> isso sim é loucura
+            EnumMapTilesPosition = {};
+            EnumTilesSize = {x:16,y:16};
+            numMapTiles = {x:(resolution.x/EnumTilesSize.x), y:(resolution.y/EnumTilesSize.y)};
+            
+            with(EnumMapTiles){ //DONT USE WITH MEU PAU, OLHA QUE LINDO:
+               
+                map =  [[BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK],
+                        [BRICK, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  BRICK],
+                        [BRICK, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  BRICK], 
+                        [BRICK, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  BRICK],
+                        [BRICK, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  BRICK], 
+                        [BRICK, SNOW,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  SNOW,  SNOW,  NONE,  SNOW,  SNOW,  SNOW,  BRICK], 
+                        [BRICK, SNOW,  NONE,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  BRICK], 
+                        [BRICK, SNOW,  NONE,  NONE,  SNOW,  SNOW,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  SNOW,  SNOW,  NONE,  SNOW,  SNOW,  SNOW,  BRICK], 
+                        [BRICK, SNOW,  NONE,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  NONE,  NONE,  SNOW,  NONE,  SNOW,  BRICK], 
+                        [BRICK, SNOW,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  NONE,  SNOW,  SNOW,  SNOW,  NONE,  SNOW,  NONE,  NONE,  NONE,  SNOW,  NONE,  SNOW,  BRICK], 
+                        [BRICK, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  BRICK], 
+                        [BRICK, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  BRICK], 
+                        [BRICK, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  BRICK], 
+                        [BRICK, NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  BRICK], 
+                        [BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK],
+                        [BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK, BRICK]]
+                //duplicates the map:
+                newMap = [];
+                for (var y in map){
+                    var linha = map[y];
+                    var newLinha1 = [];
+                    var newLinha2 = [];
+                    for(var x in linha){
+                        type = linha[x];
+                        newLinha1.push(type);newLinha1.push(type);
+                        newLinha2.push(type);newLinha2.push(type);
+                    }
+                    newMap.push(newLinha1);
+                    newMap.push(newLinha2);
+                }
+                map = newMap;
+                
+                newMap[5][10] = WATER_1;                
+                
+            } //end of with EnumMapTiles
+            */
+            
+            
+             
+            /*if (input.fire){ //ENTER or SPACE
+              fill(255);
+              rect(25, 25, 50, 50); 
+              fill(0);
+              text("CHUPA!", 30, 55); 
+              //EnumTilesPosition[NONE] = [10,12];
+              text("CHUPA!", 30, 55); 
+              //EnumTilesPosition[NONE] = [10,12];
+              //EnumTilesPosition[NONE] = [10,12];
+              //text(EnumTilesPosition.NONE,1);
+            
+            }*/
+            
+            
+            RELOGIO:
+            
+            
+            
+            
+            // determine center and max clock arm length
+            var centerX = processing.width / 2, centerY = processing.height / 2;
+            var maxArmLength = Math.min(centerX, centerY);
+            
+            function drawArm(position, lengthScale, weight) {
+            processing.strokeWeight(weight);
+            processing.line(centerX, centerY,
+              centerX + Math.sin(position * 2 * Math.PI) * lengthScale * maxArmLength,
+              centerY - Math.cos(position * 2 * Math.PI) * lengthScale * maxArmLength);
+            }
+            
+            
+            
+            var now = new Date();
+            
+            // Moving hours arm by small increments
+            var hoursPosition = (now.getHours() % 12 + now.getMinutes() / 60) / 12;
+            drawArm(hoursPosition, 0.5, 5);
+            
+            // Moving minutes arm by small increments
+            var minutesPosition = (now.getMinutes() + now.getSeconds() / 60) / 60;
+            drawArm(minutesPosition, 0.80, 3);
+            
+            // Moving hour arm by second increments
+            var secondsPosition = now.getSeconds() / 60;
+            drawArm(secondsPosition, 0.90, 1);
