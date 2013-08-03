@@ -17,10 +17,12 @@ function sketchProc(processing) {
             processing.size(resolution.x,resolution.y);   
             processing.frameRate(30);
             
-			console.log("testando github");
+			gMenu = new GameMenu();
+
+
 			
             // Spawner
-            var enemySpawner = new Spawner();
+            enemySpawner = new Spawner();
             enemySpawner.addEnemyList(["4","2","3","4","4","3","2","3","1","2","4","1"]);
             
             
@@ -55,9 +57,9 @@ function sketchProc(processing) {
             grass.hasCollider = false;
             grass.postRendered = true;
            
-           var snow = new Tile("SNOW", {x:16,y:16});
-           snow.bulletPassThrough = true;
-           snow.hasCollider = false;
+            var snow = new Tile("SNOW", {x:16,y:16});
+            snow.bulletPassThrough = true;
+            snow.hasCollider = false;
             
             var gray = new Tile("GRAY", {x:16,y:16});
             
@@ -122,6 +124,8 @@ function sketchProc(processing) {
                 players[i].spawnSpriteSheet = playerSpriteSheet;
             }
             
+
+            gMenu.setSpriteSheet(guiSpriteSheet);
             
             mItemSpawner.setSpriteSheets(itemSpriteSheet);//shootSpriteSheet, explosionSs(itemSpriteSheet);
             mItemSpawner.setCollision(collision);
@@ -303,6 +307,9 @@ function sketchProc(processing) {
                 
                 }
             }else return false;
+
+            gMenu.setNumberOfEnemies(enemySpawner.totalEnemies);
+
             
             for (var e in enemies){
                 
@@ -395,7 +402,7 @@ function sketchProc(processing) {
             //draw map (processing need to use image function)
             map1.postDrawMap(processing);
 
-            
+            gMenu.drawMenu(processing);
             // DEBUG MODE FOR COLLIDERS
             //collision.drawAllColliders(processing);
         }
