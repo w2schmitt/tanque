@@ -17,6 +17,8 @@ function sketchProc(processing) {
             processing.size(resolution.x,resolution.y);   
             processing.frameRate(30);
             
+			console.log("testando github");
+			
             // Spawner
             var enemySpawner = new Spawner();
             enemySpawner.addEnemyList(["4","2","3","4","4","3","2","3","1","2","4","1"]);
