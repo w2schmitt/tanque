@@ -80,7 +80,7 @@ function Spawner(){
         p.bulletSpriteSheet = this.bulletSpriteSheet;
         p.explosionSpritesheet = this.explosionSpriteSheet;
         p.spawnSpriteSheet = this.spawnSpriteSheet;
-        p.createCollider(this.collisionInstance);
+        p.setCollisionInstance(this.collisionInstance);
         p.setInput(this.IAinput.clone());        
        
         p.spawnerInstance = this;

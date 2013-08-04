@@ -7,9 +7,6 @@ function sketchProc(processing) {
    
     with(processing){  // haha <--- Don't use with... CHUPA  
 
-        //var IA ;
-        //var collision;
-
         // initialize variables (called at start)
         processing.setup = function (){
             
@@ -17,38 +14,36 @@ function sketchProc(processing) {
             processing.size(resolution.x,resolution.y);   
             processing.frameRate(30);
             
+            // Collision
+            collision = new Collision();   
+
+            // Game GUI
 			gMenu = new GameMenu();
-
-
 			
-            // Spawner
+            // Spawners
             enemySpawner = new Spawner();
+            enemySpawner.setCollision(collision);
             enemySpawner.addEnemyList(["4","2","3","4","4","3","2","3","1","2","4","1"]);
-            
             
             //item Spawner
             mItemSpawner = new itemSpawner();
-            
-            // Collision
-            collision = new Collision();   
-            
-            enemySpawner.setCollision(collision);
-            
+            mItemSpawner.setCollision(collision);
+
             // Players
-            players = [new Player()]; //, new Player(), new Player()];
-            enemies = enemySpawner.enemies;
-            //enemies = [];
+            players = [new Player()];
+            players[0].spawningPos = {x:16*20, y:16*25};
+            for (var p in players) {players[p].setCollisionInstance(collision);}
             
-            // Maps
-            map1 = new Map(resolution.x, resolution.y);      
+            enemies = enemySpawner.enemies; // create alias array for the enemy spanwer enemies
             
-            var grass = new Tile("GRASS", {x:16,y:16});
-                // Tiles creation
+              
+            // Map Tiles
             var brick = new Tile("BRICK", {x:8,y:8} );
             brick.setSubTiles(["BRICK_UPPER_LEFT", "BRICK_UPPER_RIGHT", "BRICK_LOWER_LEFT", "BRICK_LOWER_RIGHT"]);
             brick.setIsBreakable(true);
             
             var steel = new Tile("STEEL",{x:16,y:16});
+
             var water = new Tile("WATER",{x:16,y:16});
             water.bulletPassThrough = true;
             
@@ -64,84 +59,50 @@ function sketchProc(processing) {
             var gray = new Tile("GRAY", {x:16,y:16});
             
               
-            // pass the created tiles and setup map
+            // create map and pass the created tiles
+            map1 = new Map(resolution.x, resolution.y);
+            map1.setCollisionInstance(collision);
             map1.createTile(brick, steel, water, grass, snow, gray);
             map1.createMap();
             
 
-            // build scenary            
-           
+            // build scenary 
             map1.drawRows(["BRICK"], 16,27);
             map1.drawRows(["GRASS","GRASS", "BRICK", "BRICK"],12,13, 23,24);
-
-            //map1.drawRows(["STEEL"], 0,29);
-            //map1.drawCols(["STEEL"], 0,39);
 
             map1.drawIntervals('V',["WATER", "GRASS", "STEEL"], [6,7, 10,11], [6,9], [11,20], [23,25]);
             map1.drawIntervals('H',["WATER"], [6,7], [12,20], [11,20], [23,27]);
             
             map1.drawRects(["SNOW"], [32,14,5,9], [8,14,2,9]);
-            
-           
             map1.drawPattern([["STEEL","GRASS","GRASS","STEEL"],
                               ["STEEL","GRASS","GRASS","STEEL"]], 18,18);
                               
-            map1.drawCols(["GRAY"], 0,1,36,37,38,39);
-            map1.drawRows(["GRAY"], 0,29);
-            /*           
-            map1.setTile(WATER,27,38);
-            */
+            map1.DoneBuilding();
             
-            // after the map is complete, create the colliders
-            map1.createColliderForTiles(collision);
-            
-            // create static colliders for the selected tiles
-            //map1.createColliderForTiles(collision, ["BRICK_UPPER_LEFT", "BRICK_UPPER_RIGHT", "BRICK_LOWER_LEFT", "BRICK_LOWER_RIGHT", "STEEL", "WATER1", "WATER2", "WATER"]);
-            // ----
-            
-                       // sprites
+            // sprites
             playerSpriteSheet = new SpriteSheet(loadImage("player_all.png"));
             enemySpriteSheet = new SpriteSheet(loadImage("enemies1.png"));
             mapSpriteSheet = new SpriteSheet(loadImage("cenary.png"));
             itemSpriteSheet = new SpriteSheet(loadImage("items.png"));
             guiSpriteSheet = new SpriteSheet(loadImage("gui.png"));
-            //mapSpriteSheet8x8 = new SpriteSheet(loadImage("cenary.png"));
-            
-            //players[0].spriteSheet = playerSpriteSheet;
             shootallImg = loadImage("shoot-all.png");
             shootSpriteSheet = new SpriteSheet(shootallImg);
-            explosionSpriteSheet = new SpriteSheet(shootallImg); // variavel global explosionSpriteSheet declarada em explosion.js
-            //explosion32SpriteSheet = new SpriteSheet(shootallImg);
+            explosionSpriteSheet = new SpriteSheet(shootallImg); // variavel global explosionSpriteSheet declarada em explosion.js           
             
-            
-            //var explosionTest = new Explosion(6*32,4*32,explosionSpriteSheet, "Big");
             //setting player sprites.. dorgas mano
             for (var i in players){
-                //players[i].setSpriteSheets(playerSpriteSheet,shootSpriteSheet,explosionSpriteSheet,playerSpriteSheet );
                 players[i].spriteSheet = playerSpriteSheet;
                 players[i].explosionSpritesheet = explosionSpriteSheet;
                 players[i].bulletSpriteSheet = shootSpriteSheet;
                 players[i].spawnSpriteSheet = playerSpriteSheet;
-            }
-            
-
+            }  
             gMenu.setSpriteSheet(guiSpriteSheet);
-            
-            mItemSpawner.setSpriteSheets(itemSpriteSheet);//shootSpriteSheet, explosionSs(itemSpriteSheet);
-            mItemSpawner.setCollision(collision);
-            
+            mItemSpawner.setSpriteSheets(itemSpriteSheet);   
             enemySpawner.setSpriteSheets(enemySpriteSheet, shootSpriteSheet, explosionSpriteSheet, playerSpriteSheet);
-            map1.spriteSheet = mapSpriteSheet;
-            //map1.spriteSheet8x8 = mapSpriteSheet8x8;
-            
-            cenarySprite = loadImage("cenary.png");             
-            tileSprites = {};
-            
-            // MAP
-           
+            map1.setSpriteSheets(mapSpriteSheet);
             
             
-            // CREATE AN INPUT AND ATTACH IT TO PLAYER 1 <<<<<<<<<<<<<<<<<-----------------------------------------------------------------------------------------
+            // Create Input for players and IA
             var input = new Input();
             // list of actions this input can map
             input.setActions( new Enum("up","down", "left", "right" , "fire") );  
@@ -166,36 +127,21 @@ function sketchProc(processing) {
                 input.setBindingFunc(actions.fire,  function(input,pressed){ input.keyAttribute.fire = pressed; });
             }
             
-
             //clone will NOT copy the keyMap
             var IA = input.clone();
             enemySpawner.setIAInput(IA);
-            /*
-            with (input2){
-                //set player2 keys:
-                setKey("I", actions.up);
-                setKey("K", actions.down);
-                setKey("L", actions.right);
-                setKey("J", actions.left);
-                setKey("P", actions.fire);
-       }*/
+ 
             players[0].setInput(input);  
-            players[0].spawningPos = {x:16*20, y:16*25};
-            
-            for (var p in players){
-                players[p].createCollider(collision);
-            }
-
         }; // end setup
          
     
     
-      // Override draw function, by default it will be called 60 times per second
-    //var tileSpritesCreated = false;
+    // Override draw function, by default it will be called 60 times per second
     processing.draw = function() {
         with (this){
-            var allEntities = players.concat(enemies);
-            
+            // create an array containing enemies and players
+            var allEntities = players.concat(enemies); 
+            gMenu.setNumberOfEnemies(enemySpawner.totalEnemies);           
             
             //yes, it is safe to call this method in the loop, it will check if its already loaded
             if (playerSpriteSheet.loaded()){
@@ -233,23 +179,17 @@ function sketchProc(processing) {
                         enemySpriteSheet.setAnimation(["enemy"+i+"Left1","enemy"+i+"Left2"],"enemy"+i+"Left",15); 
                     }
                 }
-            } else return false;
+            }else return false;
                             
             if (mapSpriteSheet.loaded()){
                 if (!mapSpriteSheet.initialized){
                     mapSpriteSheet.createSprites(16,16, 8,1);
                     mapSpriteSheet.setRectSprites([0,0,8,1], 16,16, ["NONE16", "BRICK", "STEEL", "GRASS", "WATER1", "WATER2", "SNOW", "GRAY"]);
-                    mapSpriteSheet.setAnimation(["WATER1","WATER2"],"WATER",1.2);
-                    
-                    //mapSpriteSheet.createSprites(8,8, 2,2);                   
-                    //mapSpriteSheet.setRectSprites([0,1,0,1], 8,8, ["BRICK_UPPER_LEFT", "BRICK_UPPER_RIGHT", "BRICK_BOTTOM_LEFT", "BRICK_BOTTOM_RIGHT"]);      
+                    mapSpriteSheet.setAnimation(["WATER1","WATER2"],"WATER",1.2);  
                     
                     mapSpriteSheet.createSprites(8,8, 4,2);                   
                     mapSpriteSheet.setRectSprites([2,0,2,2], 8,8, ["BRICK_UPPER_LEFT", "BRICK_UPPER_RIGHT", "BRICK_LOWER_LEFT", "BRICK_LOWER_RIGHT"]);        
-                    mapSpriteSheet.setRectSprites([0,0,1,1], 8,8, ["NONE"]);
-                    
-                    //mapSpriteSheet.createSprites(8,8,1,1);
-                    //mapSpriteSheet.setRectSprites([0,0,0,0], 8,8, ["NONE"]);   
+                    mapSpriteSheet.setRectSprites([0,0,1,1], 8,8, ["NONE"]); 
                 }
             }else return false;
 
@@ -258,12 +198,9 @@ function sketchProc(processing) {
                     itemSpriteSheet.createSprites(32,32, 7,1 );
                     itemSpriteSheet.setRectSprites([0,0,7,1],32,32, ["i0","i1","i2","i3","i4","i5", "blank"]);
                     
-                    itemSpriteSheet.setAnimation(["i0", "blank"], "item0", 3);
-                    itemSpriteSheet.setAnimation(["i1", "blank"], "item1", 3);
-                    itemSpriteSheet.setAnimation(["i2", "blank"], "item2", 3);
-                    itemSpriteSheet.setAnimation(["i3", "blank"], "item3", 3);
-                    itemSpriteSheet.setAnimation(["i4", "blank"], "item4", 3);
-                    itemSpriteSheet.setAnimation(["i5", "blank"], "item5", 3);
+                    for (var i=0; i<=5; i++){
+                        itemSpriteSheet.setAnimation(["i"+i, "blank"], "item"+i, 3);
+                    }
                 }                
             }else return false;
             
@@ -276,8 +213,7 @@ function sketchProc(processing) {
                     guiSpriteSheet.setRectSprites([0,0,1,1],32,32, ["flagIcon"]);
                     
                 }
-            }
-            
+            }else return false;
             
             if (shootSpriteSheet.loaded()){
                 if (!shootSpriteSheet.initialized){
@@ -285,10 +221,6 @@ function sketchProc(processing) {
                     shootSpriteSheet.setRectSprites([0,0,4,1],16,16, ["bulletUp","bulletLeft","bulletRight","bulletDown"]);
                 }                
             }else return false;
-            //nao rpecisa mais dar upodate nso spreadSHITs pra animar os sprites :) funciona por mágica agora
-            //playerSpriteSheet.update();
-            
-            
             
             if(explosionSpriteSheet.loaded()){
                 if (!explosionSpriteSheet.initialized){
@@ -298,21 +230,17 @@ function sketchProc(processing) {
                     explosionSpriteSheet.createSprites(64,64, 3,1,16*4 + 32*3,0); //offset inicial pra n pegar as bullets e explosoes pequenas
                     explosionSpriteSheet.setRectSprites( [0,0,2,1], 64,64, ["explosionBig1", "explosionBig2"]);
                     
-                    
                     explosionSpriteSheet.setAnimation(["explosionSmall1","explosionSmall2","explosionSmall3"],"explosionSmall",15, false);
                     explosionSpriteSheet.setAnimation(["explosionSmall1","explosionSmall2","explosionSmall3", //small start
                                                         "explosionBig1", "explosionBig2"  ,"explosionSmall3"], //small end
-                                            "explosionBig",15,false);
-                
-                
+                                                        "explosionBig",15,false);
                 }
             }else return false;
 
-            gMenu.setNumberOfEnemies(enemySpawner.totalEnemies);
-
             
-            for (var e in enemies){
-                
+
+            // move IA
+            for (var e in enemies){                
                 var IA = enemies[e].input;
                 //IA MTO BOA:
                 if (random(25) < 1){
@@ -329,7 +257,7 @@ function sketchProc(processing) {
             }
             
             //item random em momento random
-            if (random(60 ) < 1){
+            if (random(60) < 1){
                 mItemSpawner.spawnItem();
             }
            
@@ -340,43 +268,44 @@ function sketchProc(processing) {
                 allEntities[p].update();
             }
             
-          
-                  
-                      
+            // do the realistic physics computations
             collision.computeCollisions();
             
             
+            // DRAWING COMMANDS
             // erase background
             processing.background(0);
-            
-            
-            
-            
+
             // draw map
             map1.drawMap(processing);
+             
+            // draw player and enemies
+            for (var i in allEntities){
+                var p = allEntities[i];   
+                if (!p.isDead){
+                    image(p.currentSprite, p.pos.x, p.pos.y); 
+                    if (p.shieldSprite !== null)
+                        image(p.shieldSprite, p.pos.x, p.pos.y); 
+                }
+                
+                // draw players bullets
+                for (var b in p.bullets){
+                    b = p.bullets[b];
+                    image(b.currentSprite, b.pos.x, b.pos.y);
+                }
+            }
+
+            // draw tiles rendered after the player
+            map1.postDrawMap(processing);
 
             //draw items:
             for(var i in mItemSpawner.allItems){
                 var item = mItemSpawner.allItems[i];
                 item.update();
-                 if (item.currentSprite != null){
+                if (item.currentSprite != null){
                     image(item.currentSprite, item.pos.x, item.pos.y); 
                 }
             }
-             
-            for (var i in allEntities){
-                var p = allEntities[i];   
-                if (!p.isDead){
-                    image(p.currentSprite, p.pos.x, p.pos.y); 
-                                    if (p.shieldSprite !== null)
-        image(p.shieldSprite, p.pos.x, p.pos.y); 
-                }
-                     // draw players bullets
-                for (var b in p.bullets){
-                    b = p.bullets[b];
-                    image(b.currentSprite, b.pos.x, b.pos.y);
-                }
-                 }
             
             //draw explosions
             for (var i in allExplosions){
@@ -398,11 +327,9 @@ function sketchProc(processing) {
                      i--;
                  } 
             }
-            
-            //draw map (processing need to use image function)
-            map1.postDrawMap(processing);
-
+                        
             gMenu.drawMenu(processing);
+
             // DEBUG MODE FOR COLLIDERS
             //collision.drawAllColliders(processing);
         }

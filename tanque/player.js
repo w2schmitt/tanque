@@ -83,20 +83,15 @@ function Player(){
         
         if (this.spawning) {
             this.currentSprite = this.spawnSpriteSheet.getSprite("spawn");            
-           // return false;
-         
         } else if (this.isDead){
             
-        } else {
-            
-            
+        } else {     
             if (this.isShielded){
-                this.shieldSprite = this.spriteSheet.getSprite("shield");//,this.shieldAnimContext);
-                
+                this.shieldSprite = this.spriteSheet.getSprite("shield");
             } else {
                 this.shieldSprite = null;
             }
-            
+
             for (var i=this.ignore.length-1; i>=0; i--){
                 var p = this.ignore[i];        
                 var pos = {x:(this.pos.x+16), y:(this.pos.y+16)}; // get the center pos
@@ -106,7 +101,6 @@ function Player(){
                 }
             }
         
-            //console.log(this.pos);
             var gridSize =16;
             this.currentSpeed.x = 0;
             this.currentSpeed.y = 0;
@@ -237,8 +231,6 @@ function Player(){
     // create a dynamic collider for the player, and a callback function that will execute when this collider hits something
     // the function has access to the object itself and the other object it collided.
     this.defaultCollision = function(info, other){      // function that is called when this obj collides with something
-        /*info.obj.pos.x -= info.obj.currentSpeed.x;
-        info.obj.pos.y -= info.obj.currentSpeed.y*/    
         var self = info.obj;
         var gridSize = 16;
         if (other.type==="tile"  || other.type==="invisible"){
@@ -284,20 +276,22 @@ function Player(){
         if (self.spawning === false && other.type === "bullet" && !other.obj.remove){
             
             if (other.obj.owner.type !== self.type){    // if they are of different class, they can kill each other (player hit enemy, or enemy hit player)
-                //console.log("google tradutor diz: MORREU!");
                 other.obj.remove = true;
                 self.die();
             } else {
-               //if  (!self.isThisBulletFromThisPlayer(other.obj)){ //dont colide with own bullet (dorgas)
-            //}       
+      
             }             
         }
                  
     };
+
+    this.setCollisionInstance = function(col){
+        this.collisionInstance = col;
+        this.createCollider();
+    }
     
-    this.createCollider = function(collision){  
-        this.collisionInstance = collision;
-        collision.createDynamicCollider({obj:this, type:this.type ,w:32,h:32}, this.defaultCollision); 
+    this.createCollider = function(){  
+        this.collisionInstance.createDynamicCollider({obj:this, type:this.type ,w:32,h:32}, this.defaultCollision); 
     };
 
             

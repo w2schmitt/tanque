@@ -1,0 +1,341 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "game.html",
+			"settings":
+			{
+				"buffer_size": 658,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app.js",
+			"settings":
+			{
+				"buffer_size": 20131,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spawner.js",
+			"settings":
+			{
+				"buffer_size": 2957,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "\nfunction GameMenu(){\n    this.initPos = {x:37*16, y:3*16};\n    this.spriteSheet = null;\n    this.numOfEnemies = 0;\n    \n    this.setNumberOfEnemies = function(num){\n        this.numOfEnemies = num;\n    }\n    \n    this.setSpriteSheet = function(ss){\n        this.spriteSheet = ss;\n    }\n    \n    this.drawMenu = function(context){\n        var row=0;\n        var col=0;\n        //draw two columns of icons\n        for (var i=0; i<this.numOfEnemies; i++){\n            if (i%2===0){\n                col = 0; \n                context.image(this.spriteSheet.getSprite(\"enemyIcon\"), this.initPos.x+col*16, this.initPos.y+row*16, 16, 16);\n            } else {                \n                col =  1;\n                context.image(this.spriteSheet.getSprite(\"enemyIcon\"), this.initPos.x+col*16, this.initPos.y+row*16, 16, 16);\n                row += 1;\n            }\n            \n            \n        }\n    }\n}",
+			"file": "gameMenu.js",
+			"file_size": 904,
+			"file_write_time": 130199806484088710,
+			"settings":
+			{
+				"buffer_size": 904,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 416.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/Wagner/Dropbox/Mestrado/thickness/index.html",
+		"/C/Users/Wagner/Documents/GitHub/tanque/tanque/app.js",
+		"/C/Users/Wagner/Dropbox/Mestrado/dcQuery/dc/models.html",
+		"/C/Users/Wagner/Dropbox/Mestrado/thickness/histogram.html",
+		"/C/Users/Wagner/Dropbox/Mestrado/thickness/models.html"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"setNumberOfEnemies",
+			"            ",
+			"gMenu",
+			"function",
+			"casa",
+			"var = casa casa casa teste",
+			"teste",
+			"casa"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "game.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 658,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								658,
+								658
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 20131,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								15746,
+								15746
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5290.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "spawner.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2957,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								660,
+								672
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 225.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "gameMenu.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 904,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								198,
+								198
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 90.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"project": "sublime_tank-proj.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"in",
+				"C:\\Users\\Wagner\\Dropbox\\Mestrado\\thickness\\index.html"
+			],
+			[
+				"1",
+				"1 2 3 4 5 6 7 8 0"
+			],
+			[
+				"mod",
+				"C:\\Users\\Wagner\\Dropbox\\Mestrado\\thickness\\models.html"
+			],
+			[
+				"index",
+				"C:\\Users\\Wagner\\Dropbox\\Mestrado\\thickness\\index.html"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 498.0,
+		"selected_items":
+		[
+		],
+		"width": 378.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+		"last_automatic_layout":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		]
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

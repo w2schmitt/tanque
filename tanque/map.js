@@ -4,7 +4,6 @@ function Map(sizeX, sizeY){
     this.tileSize = 8;
     this.size = {x:sizeX/this.tileSize, y:sizeY/this.tileSize};
     this.tiles = {};
-    //this.enumTiles = [];  
     this.map = [];
     this.spriteSheet = null;
     this.spriteSheet8x8 = null;
@@ -15,7 +14,26 @@ function Map(sizeX, sizeY){
     this.checkInvisibleColliders = false;
     this.invisibleColliders = [];
     //this.tilesInstance = null;
+
+    // should be called after the building phase
+    this.DoneBuilding = function(){
+            // create the borders
+            this.drawCols(["GRAY"], 0,1,36,37,38,39);
+            this.drawRows(["GRAY"], 0,29);
+
+            // put the code to build the player general (flag)
+
+            this.createColliderForTiles();
+    }
     
+    this.setSpriteSheets = function(ss){
+        this.spriteSheet = ss;
+    }
+
+    this.setCollisionInstance = function(col){
+        this.collisionInstance = col;
+    }
+
     this.createTile = function(){
         for (var v in arguments){
             var tile = arguments[v];
@@ -27,7 +45,6 @@ function Map(sizeX, sizeY){
                 this.addPostDrawTile(tile.name);
                 
         }
-        //console.log(this.tiles);
     };
     
     this.setTilesInstance = function(instance){
@@ -197,18 +214,16 @@ function Map(sizeX, sizeY){
         return this.spriteSheet.getSprite(this.map[y][x]);
     };
     
-    this.createColliderForTiles = function(collision){
-        this.collisionInstance = collision;
+    this.createColliderForTiles = function(){
         for(var i=0; i<this.size.y; i+=1){
             for (var j=0; j<this.size.x; j+=1){
                 var tile = this.tiles[this.map[i][j]];
                 if (tile != null && tile.hasCollider){
                         collision.createStaticCollider({obj:this, type:"tile", subtype:tile.name, x:j, y:i, tile:tile}, {x:j*this.tileSize,y:i*this.tileSize, w:tile.size.x,h:tile.size.y}, 
-                                                this.defaultCollision);
+                                                        this.defaultCollision);
                 }
                 if (tile != null && tile.drawInvisibleCollider(this.map[i][j])){
-                        collision.createStaticCollider({obj:this, type:"invisible", x:j, y:i}, {x:j*this.tileSize, y:i*this.tileSize, w:16,h:16}, 
-                                                    function(info,other){});
+                        collision.createStaticCollider({obj:this, type:"invisible", x:j, y:i}, {x:j*this.tileSize, y:i*this.tileSize, w:16,h:16}, function(info,other){});
                         this.invisibleColliders.push({x:j,y:i}); 
                 }
             }
