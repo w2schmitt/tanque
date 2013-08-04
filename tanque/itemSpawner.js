@@ -13,6 +13,7 @@ function itemSpawner(){
     }
     
     this.spawnItem = function(){
+        this.clearItems();
         var pos = {x:0,y:0};
         pos.x =  gridAlign (Math.random()*(this.spawnArea.x1 - this.spawnArea.x0) + this.spawnArea.x0) ;
         pos.y = gridAlign(Math.random()*(this.spawnArea.y1 - this.spawnArea.y0)  + this.spawnArea.y0);
@@ -36,6 +37,10 @@ function itemSpawner(){
         var y = opt_y || item.pos.y;
         var t = type || item.type;         
         this.collisionInstance.removeStaticCollider(x,y, t);
+    }
+
+    this.clearItems = function(){
+        this.allItems.splice(0, this.allItems.length);
     }
     
     this.defaultCollision = function(info,other){

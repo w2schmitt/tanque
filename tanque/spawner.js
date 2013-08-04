@@ -8,6 +8,7 @@ function Spawner(){
     this.spawnCounter = 0;
     this.intervalId = 0;
     this.collisionInstance = null;
+    this.itemSpawnerInstance = null;
     this.bulletSpriteSheet = null;
     this.explosionSpriteSheet = null;
     this.playerSpriteSheet = null;
@@ -18,6 +19,10 @@ function Spawner(){
     this.setIAInput = function(ia){
         this.IAinput = ia;
     };
+
+    this.setItemSpawner = function(is){
+        this.itemSpawnerInstance = is;
+    }
     
     this.addEnemy = function(type){
         this.queue.push(type);
@@ -49,25 +54,29 @@ function Spawner(){
     
     this.spawnEnemy = function(){
         var e = this.getEnemyFromQueue();
+        var subsubtype = "";
         var p = null;
-        if (e==="1"){
-            p = this.createBasicEnemy(); 
-            
-        } else if (e==="2"){
+        if (e>4) {  // this tank will carry an item    
+            subsubtype = "special";
+            e-=4;
+        }
+
+        if (e===1){
+            p = this.createBasicEnemy();            
+        } else if (e===2){
             p = this.createBasicEnemy(); 
             p.speed = 5;            
-        } else if (e==="3"){
+        } else if (e===3){
             p = this.createBasicEnemy();  
-            p.bulletSpeed = 11;
-           //p.  
-            
-        } else if (e==="4"){
+            p.bulletSpeed = 11;              
+        } else if (e===4){
             p = this.createBasicEnemy(); 
             p.maxLives = 4;            
         }
         
-        if (p!==null){
-            p.subtype = parseInt(e);
+        if (p!==null){            
+            p.subtype = e;
+            p.subsubtype = subsubtype;
             this.totalEnemies--;    
         }
     }
@@ -76,6 +85,7 @@ function Spawner(){
         var p = new Player();
         p.spawningPos = this.spawnPos[this.spawnCounter++%this.spawnPos.length];
         p.type = "enemy";
+        p.setItemSpawner(this.itemSpawnerInstance);
         p.spriteSheet = this.playerSpriteSheet; 
         p.bulletSpriteSheet = this.bulletSpriteSheet;
         p.explosionSpritesheet = this.explosionSpriteSheet;

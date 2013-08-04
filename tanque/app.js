@@ -19,20 +19,22 @@ function sketchProc(processing) {
 
             // Game GUI
 			gMenu = new GameMenu();
+
+            //item Spawner
+            mItemSpawner = new itemSpawner();
+            mItemSpawner.setCollision(collision);
 			
             // Spawners
             enemySpawner = new Spawner();
             enemySpawner.setCollision(collision);
-            enemySpawner.addEnemyList(["4","2","3","4","4","3","2","3","1","2","4","1"]);
-            
-            //item Spawner
-            mItemSpawner = new itemSpawner();
-            mItemSpawner.setCollision(collision);
+            enemySpawner.setItemSpawner(mItemSpawner);
+            //normal tanks 1 to 4, special tanks 5 to 8
+            enemySpawner.addEnemyList([1,1,2,5,1,  4,3,3,2,7,  4,4,1,1,3,  1,1,8,4,4]);
 
             // Players
             players = [new Player()];
             players[0].spawningPos = {x:16*20, y:16*25};
-            for (var p in players) {players[p].setCollisionInstance(collision);}
+            for (var p in players){players[p].setCollisionInstance(collision);}
             
             enemies = enemySpawner.enemies; // create alias array for the enemy spanwer enemies
             
@@ -169,15 +171,26 @@ function sketchProc(processing) {
                     enemySpriteSheet.createSprites(32,32, 16,7);                    
                            
                     var t=1;
-                    // animation for all the enemies
+                    // animation for normal the enemies
                     for (var i=1; i<=7; i++){                        
                         if (t>3) t++;
                         enemySpriteSheet.setRectSprites( [0,i-1,8,1], 32,32, ["enemy"+i+"Up1", "enemy"+i+"Right1","enemy"+i+"Down1","enemy"+i+"Left1", "enemy"+i+"Up2", "enemy"+i+"Right2","enemy"+i+"Down2","enemy"+i+"Left2"]);
-                        enemySpriteSheet.setAnimation(["enemy"+i+"Up1","enemy"+i+"Up2"],"enemy"+i+"Up",15);
-                        enemySpriteSheet.setAnimation(["enemy"+i+"Right1","enemy"+i+"Right2"],"enemy"+i+"Right",15);
-                        enemySpriteSheet.setAnimation(["enemy"+i+"Down1","enemy"+i+"Down2"],"enemy"+i+"Down",15); 
-                        enemySpriteSheet.setAnimation(["enemy"+i+"Left1","enemy"+i+"Left2"],"enemy"+i+"Left",15); 
+                        if (i<5) {
+                            enemySpriteSheet.setRectSprites( [8,i-1,8,1], 32,32, ["specialenemy"+i+"Up1", "specialenemy"+i+"Right1","specialenemy"+i+"Down1","specialenemy"+i+"Left1", "specialenemy"+i+"Up2", "specialenemy"+i+"Right2","specialenemy"+i+"Down2","specialenemy"+i+"Left2"]);
+                            enemySpriteSheet.setAnimation(["enemy"+i+"Up1"    ,"specialenemy"+i+"Up1"   , "enemy"+i+"Up2"    , "specialenemy"+i+"Up2"   ], "specialenemy"+i+"Up"    ,10);
+                            enemySpriteSheet.setAnimation(["enemy"+i+"Right1" ,"specialenemy"+i+"Right1", "enemy"+i+"Right2" , "specialenemy"+i+"Right2"], "specialenemy"+i+"Right" ,10);
+                            enemySpriteSheet.setAnimation(["enemy"+i+"Down1"  ,"specialenemy"+i+"Down1" , "enemy"+i+"Down2"  , "specialenemy"+i+"Down2" ], "specialenemy"+i+"Down"  ,10); 
+                            enemySpriteSheet.setAnimation(["enemy"+i+"Left1"  ,"specialenemy"+i+"Left1" , "enemy"+i+"Left2"  , "specialenemy"+i+"Left2" ], "specialenemy"+i+"Left"  ,10); 
+                        }
+
+                        enemySpriteSheet.setAnimation(["enemy"+i+"Up1"    ,"enemy"+i+"Up2"   ] ,"enemy"+i+"Up"    ,15);
+                        enemySpriteSheet.setAnimation(["enemy"+i+"Right1" ,"enemy"+i+"Right2"] ,"enemy"+i+"Right" ,15);
+                        enemySpriteSheet.setAnimation(["enemy"+i+"Down1"  ,"enemy"+i+"Down2" ] ,"enemy"+i+"Down"  ,15); 
+                        enemySpriteSheet.setAnimation(["enemy"+i+"Left1"  ,"enemy"+i+"Left2" ] ,"enemy"+i+"Left"  ,15); 
                     }
+
+                    // animation for special enemies
+
                 }
             }else return false;
                             
@@ -245,21 +258,18 @@ function sketchProc(processing) {
                 //IA MTO BOA:
                 if (random(25) < 1){
                     IA.value.x = Math.floor(random(3)) -1;
-                }
-                if (random(20) < 1){
+                } else if (random(20) < 1){
                     IA.value.y = Math.floor(random(3)) -1;
-                }
-                
-                if (random(20) < 1){
+                } if (random(20) < 1){
                     IA.value.y = Math.floor(random(3)) -1;
                 }
                 IA.value.fire = (Math.floor(random(3)) == 0);
             }
             
             //item random em momento random
-            if (random(60) < 1){
-                mItemSpawner.spawnItem();
-            }
+            //if (random(60) < 1){
+            //    mItemSpawner.spawnItem();
+            //}
            
             
             //update player position

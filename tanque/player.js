@@ -9,6 +9,7 @@ function Player(){
     this.bulletSpeed = 7;
     this.type = "player";
     this.subtype = 1;
+    this.subsubtype = ""; // this tank carries an item
     this.currentSpeed = {x:0,y:0};
     this.input = {};
     this.spriteSheet = null;
@@ -30,6 +31,7 @@ function Player(){
     this.ignore = [];
     this.isDead = false;
     this.spawnerInstance = null;
+    this.itemSpanwerInstance = null;
     //this.bornTogether = false;
     //this.shieldTime = 1*1000; // in ms
     
@@ -40,7 +42,9 @@ function Player(){
     
     this.collisionInstance = null;
     
-    
+    this.setItemSpawner = function(is){
+        this.itemSpanwerInstance = is;
+    }
     
     this.setInput = function(input){
         this.input = input;
@@ -56,6 +60,7 @@ function Player(){
                          return function() {    //Return a function in the context of 'self'
                              self.spawning = false;
                              if (self.type === "player") self.setShieldOn(1*3000);
+                             if (self.subsubtype === "special") self.itemSpanwerInstance.clearItems();
                          };
                      })(this),
                      this.spawnTime );
@@ -156,15 +161,15 @@ function Player(){
                     this.animationContext = this.spriteSheet.createContext(); 
                 }
                 //console.log(this.spriteSheet.getSprite("player"+this.currentDirection,this.animationContext));
-                this.currentSprite = this.spriteSheet.getSprite(this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext);
+                this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext);
             }
             //console.log(this.type+this.subtype+this.currentDirection);
             
             //console.log(""+this.type+this.subtype+this.currentDirection+this.lives);
             if (this.input.value.x === 0 && this.input.value.y === 0 ){
-                this.spriteSheet.getAnimation(this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext).stop();
+                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext).stop();
             } else {
-                this.spriteSheet.getAnimation(this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext).continue();
+                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext).continue();
             }    
         } 
         //if (this.isDead){
@@ -190,6 +195,12 @@ function Player(){
     
     this.die = function(){
         //this.lives++;
+        if (this.subsubtype === "special"){
+            //spawn item
+            this.itemSpanwerInstance.spawnItem();
+            this.subsubtype = "";
+        }
+        
         if (this.type==="player" || (++this.lives) > this.maxLives){
             allExplosions.push(new Explosion(this.pos.x,this.pos.y,explosionSpriteSheet, "Big"));
             this.shieldSprite = null;
