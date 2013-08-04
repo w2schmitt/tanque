@@ -177,10 +177,10 @@ function sketchProc(processing) {
                         enemySpriteSheet.setRectSprites( [0,i-1,8,1], 32,32, ["enemy"+i+"Up1", "enemy"+i+"Right1","enemy"+i+"Down1","enemy"+i+"Left1", "enemy"+i+"Up2", "enemy"+i+"Right2","enemy"+i+"Down2","enemy"+i+"Left2"]);
                         if (i<5) {
                             enemySpriteSheet.setRectSprites( [8,i-1,8,1], 32,32, ["specialenemy"+i+"Up1", "specialenemy"+i+"Right1","specialenemy"+i+"Down1","specialenemy"+i+"Left1", "specialenemy"+i+"Up2", "specialenemy"+i+"Right2","specialenemy"+i+"Down2","specialenemy"+i+"Left2"]);
-                            enemySpriteSheet.setAnimation(["enemy"+i+"Up1"    ,"specialenemy"+i+"Up1"   , "enemy"+i+"Up2"    , "specialenemy"+i+"Up2"   ], "specialenemy"+i+"Up"    ,10);
-                            enemySpriteSheet.setAnimation(["enemy"+i+"Right1" ,"specialenemy"+i+"Right1", "enemy"+i+"Right2" , "specialenemy"+i+"Right2"], "specialenemy"+i+"Right" ,10);
-                            enemySpriteSheet.setAnimation(["enemy"+i+"Down1"  ,"specialenemy"+i+"Down1" , "enemy"+i+"Down2"  , "specialenemy"+i+"Down2" ], "specialenemy"+i+"Down"  ,10); 
-                            enemySpriteSheet.setAnimation(["enemy"+i+"Left1"  ,"specialenemy"+i+"Left1" , "enemy"+i+"Left2"  , "specialenemy"+i+"Left2" ], "specialenemy"+i+"Left"  ,10); 
+                            enemySpriteSheet.setAnimation(["enemy"+i+"Up1"    ,"specialenemy"+i+"Up2"   , "enemy"+i+"Up1"    , "specialenemy"+i+"Up2"   ], "specialenemy"+i+"Up"    ,10);
+                            enemySpriteSheet.setAnimation(["enemy"+i+"Right1" ,"specialenemy"+i+"Right2", "enemy"+i+"Right1" , "specialenemy"+i+"Right2"], "specialenemy"+i+"Right" ,10);
+                            enemySpriteSheet.setAnimation(["enemy"+i+"Down1"  ,"specialenemy"+i+"Down2" , "enemy"+i+"Down1"  , "specialenemy"+i+"Down2" ], "specialenemy"+i+"Down"  ,10); 
+                            enemySpriteSheet.setAnimation(["enemy"+i+"Left1"  ,"specialenemy"+i+"Left2" , "enemy"+i+"Left1"  , "specialenemy"+i+"Left2" ], "specialenemy"+i+"Left"  ,10); 
                         }
 
                         enemySpriteSheet.setAnimation(["enemy"+i+"Up1"    ,"enemy"+i+"Up2"   ] ,"enemy"+i+"Up"    ,15);
@@ -258,11 +258,13 @@ function sketchProc(processing) {
                 //IA MTO BOA:
                 if (random(25) < 1){
                     IA.value.x = Math.floor(random(3)) -1;
-                } else if (random(20) < 1){
+                } 
+                if (random(20) < 1){
                     IA.value.y = Math.floor(random(3)) -1;
-                } if (random(20) < 1){
+                } 
+                if (random(20) < 1){
                     IA.value.y = Math.floor(random(3)) -1;
-                }
+                }                
                 IA.value.fire = (Math.floor(random(3)) == 0);
             }
             
