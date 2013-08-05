@@ -271,7 +271,21 @@ function sketchProc(processing) {
             for (var e in enemies){                
                 var IA = enemies[e].input;
                 //IA MTO BOA:
+                //probability of change:
                 if (random(25) < 1){
+                    IA.value.x = 0;
+                    IA.value.y = 0;
+                    IA.value.fire = true;//(Math.floor(random(3)) == 0);
+                     //higher probability of vertical movement 
+                    if (random(4) > 1){
+                        //higher probability of going down
+                        IA.value.y = (random (4) > 1)?1:-1 
+                    }else{
+                        //same horizontam prob:
+                        IA.value.x = Math.floor(random(3)) -1;
+                    }
+                }
+                /*if (random(25) < 1){
                     IA.value.x = Math.floor(random(3)) -1;
                 } 
                 if (random(20) < 1){
@@ -280,7 +294,7 @@ function sketchProc(processing) {
                 if (random(20) < 1){
                     IA.value.y = Math.floor(random(3)) -1;
                 }                
-                IA.value.fire = (Math.floor(random(3)) == 0);
+                IA.value.fire = (Math.floor(random(3)) == 0);*/
             }          
             
             //update player position
