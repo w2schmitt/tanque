@@ -26,8 +26,7 @@ function Tile(name, size, func){
     
     this.drawInvisibleCollider = function(subTileName){
         return (this.needInvisibleCollider && subTileName === this.subTiles[0]);
-    }
-    
+    }    
     
     this.defaultDrawFunction = function(map, y, x){
         map[y][x]     = this.subTiles[0] || this.name;

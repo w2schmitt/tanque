@@ -11,7 +11,7 @@
 - bug: items podem nascer em lugares impossíveis de pegar ou ainda dentro da base do player.
 		(possível solução: verificar no mapa se o item não está totalmente dentro de uma área impossível de pegar, ou talvez fazer o item dar spawn na posição de onde o inimigo morreu (isso seria diferente do orignal, mas faz sentido))
 
-- not done: item pá transformar a casa em steel durante um tempo.
+- [DONE]: item pá transformar a casa em steel durante um tempo.
 
 - not done: player levels 2,3 e 4, que aumentam com o item estrela.
 

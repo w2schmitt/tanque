@@ -239,7 +239,7 @@ function Player(){
                 //create new collider for explosion
                 var explinfo = this.bullets[i].createExplosionObject()
                 this.collisionInstance.createDynamicCollider(explinfo, this.bullets[i].deafultExplosionCollision, this.bullets[i].explosionRect.offx, this.bullets[i].explosionRect.offy);
-                setTimeout((function(self) { return function() { self.col.removeDynamicCollider(self.obj)};})({col:this.collisionInstance, obj:explinfo.obj}), 1000); // <--- bah, to muito louco, wololo
+                setTimeout((function(self) { return function() { self.col.removeDynamicCollider(self.obj)};})({col:this.collisionInstance, obj:explinfo.obj}), 200); // <--- bah, to muito louco, wololo
                 this.bullets.splice(i,1);              
             }
         }

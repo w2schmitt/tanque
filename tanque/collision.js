@@ -14,6 +14,8 @@ function Collision(){
     this.createStaticCollider = function(info,rect,callback){
         this.staticColliders.push({"i":info, "r":rect, "func":callback});
     }
+
+
     
     this.removeDynamicCollider = function( obj ){
         for (var i=0; i< this.dynamicColliders.length; i++)
@@ -25,16 +27,48 @@ function Collision(){
     
     // the position is the id that defines a Static Collider
     this.removeStaticCollider = function( x,y , type){
-         //var removed = [];
          for (var i=this.staticColliders.length-1; i>=0 ; i--){
             if (x === this.staticColliders[i].i.x && y === this.staticColliders[i].i.y && this.staticColliders[i].i.type === type){
-                //removed.push({x:x,y:y});
                 this.staticColliders.splice(i,1);  
-                //break;
+                //console.log("found collider");
             }
          }
-         //console.log(removed);
+    };
+
+    this.existsStaticCollider = function(x,y,type){
+        for (var i=this.staticColliders.length-1; i>=0 ; i--){
+            if (x === this.staticColliders[i].i.x && y === this.staticColliders[i].i.y && this.staticColliders[i].i.type === type){
+                return true;
+                //console.log("found collider");
+            }
+         }
+
+         return false;
     }
+
+    // change the pairs [attr,value] of the collider
+    this.modifyStaticCollider = function( x,y, type){
+        var collider = null;
+        //find collider
+        for (var i=this.staticColliders.length-1; i>=0 ; i--){
+            if (x === this.staticColliders[i].i.x && y === this.staticColliders[i].i.y && this.staticColliders[i].i.type === type){
+                collider = this.staticColliders[i];
+            }
+        }
+        // change attribute values
+        if (collider !== null){
+            for (var arg in arguments){
+                if (arg<3) continue;
+                var attr = arguments[arg][0];
+                var value = arguments[arg][1];
+
+                //console.log(x,y, attr, value);
+
+                if (collider.i.hasAttribute(attr))
+                    collider.i[attr] = value;
+            }
+        }
+    };
     
     this.computeCollisions = function(){
         //collision between static and dynamic colliders
@@ -44,6 +78,8 @@ function Collision(){
             // static collider array can be modified inside this loop
             for (var i=this.staticColliders.length-1; i>=0; i--) { //for (var scol in this.staticColliders)
                 scol = this.staticColliders[i];
+                if (!scol) continue;
+
                 dobj = dcol.i.obj;
                 //console.log(dcol.i.offx);
                 rect = {x:(dobj.pos.x+dcol.i.offx), y:(dobj.pos.y+dcol.i.offy), w:dcol.i.w, h:dcol.i.h };

@@ -72,10 +72,11 @@ function itemSpawner(){
     // the items can affect the player, the map and the enemies
     this.itemEffect = function(itemType){
 
+       
+
         if (itemType === 0) {           // estrela
             return null;
         }
-
         if (itemType === 1){            // granada
             return function(player, map, enemies){
                 for (var i=enemies.length-1; i>=0; i--){
@@ -83,20 +84,16 @@ function itemSpawner(){
                 }
             };
         }
-
         if (itemType === 2){            // escudo
             return function(player, map, enemies){
                 player.setShieldOn(15000);
             }
         }
-
         if (itemType === 3){            // casa de aço
             return function(player, map, enemies){
-                //map.setSteelBase(15000);
+                map.enableSolidBase(15000);
             }
         }
-
-
         if (itemType === 4){            // vida +1
             return function(player, map, enemies){
                 for (var i=enemies.length-1; i>=0; i--){
@@ -104,7 +101,6 @@ function itemSpawner(){
                 }
             }
         }
-
         if (itemType === 5){            // relogio
             return function(player, map, enemies){
                 for (var i=enemies.length-1; i>=0; i--){

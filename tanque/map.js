@@ -13,6 +13,8 @@ function Map(sizeX, sizeY){
     
     this.checkInvisibleColliders = false;
     this.invisibleColliders = [];
+    this.baseCollidersRef = [];
+    this.drawingHouse = false;
     //this.tilesInstance = null;
 
     // should be called after the building phase
@@ -22,11 +24,68 @@ function Map(sizeX, sizeY){
             this.drawRows(["GRAY"], 0,29);
 
             // put the code to build the player general base (flag)
+            this.drawingHouse = true;
             this.drawIntervals('V', ["BRICK"], [17,20], [27,28]);
             this.drawIntervals('H', ["BRICK"], [26], [17,20]);
-            //map1.drawIntervals('V',["WATER", "GRASS", "STEEL"], [6,7, 10,11], [6,9], [11,20], [23,25]);
-
+            this.drawingHouse = false;
+            /*
+            this.baseCollidersRef.push([17*2,26*2,"BRICK"], [17*2,27*2,"BRICK"], [17*2,28*2,"BRICK"],
+                                       [20,26,"BRICK"], [20,27,"BRICK"], [20,28,"BRICK"],
+                                   aw    [18,26,"BRICK"], [19,26,"BRICK"]);
+            */
             this.createColliderForTiles();
+    }
+
+
+
+    this.enableSolidBase = function(time){
+        for (var i in this.baseCollidersRef){
+            var col = this.baseCollidersRef[i];
+            this.removeTile(col[0],col[1]);
+            this.map[col[0]][col[1]] = "STEEL";
+            var tile = this.tiles["STEEL"];
+            this.collisionInstance.createStaticCollider({obj:this, type:"tile", subtype:tile.name, x:col[1], y:col[0], tile:tile}, {x:col[1]*this.tileSize,y:col[0]*this.tileSize, w:tile.size.x,h:tile.size.y}, 
+                                                        this.defaultCollision);
+            //console.log(col[0], col[1], this.map[col[0]][col[1]]);
+            //this.collisionInstance.modifyStaticCollider(col[0], col[1], col[2], ["type", "STEEL"]);
+        }
+
+        setTimeout((function(self) {            //Self-executing func which takes 'this' as self
+                         return function() {    //Return a function in the context of 'self'                             
+                             self.disableSolidBase(); 
+                         };
+                     })(this),
+                     time );
+    }
+
+    this.disableSolidBase = function(){
+        for (var i in this.baseCollidersRef){
+            var col = this.baseCollidersRef[i];
+            this.removeTile(col[0],col[1]);
+            var tile = this.tiles["BRICK"];
+            tile.putItselfInMap(this.map, col[0], col[1]);
+
+
+            //this.collisionInstance.createStaticCollider({obj:this, type:"tile", subtype:tile.name, x:col[1], y:col[0], tile:tile}, {x:col[1]*this.tileSize,y:col[0]*this.tileSize, w:tile.size.x,h:tile.size.y}, 
+                                                        //this.defaultCollision);
+        }
+
+        this.createColliderForTiles();
+    }
+
+    this.removeTile = function(y,x){
+        //console.log(this.map[y][x]);
+        this.map[y][x]     = "NONE"
+        this.map[y+1][x]   = "NONE";
+        this.map[y][x+1]   = "NONE";
+        this.map[y+1][x+1] = "NONE";
+
+        this.removeCollider(x,y,"tile");
+        this.removeCollider(x+1,y,"tile");
+        this.removeCollider(x,y+1,"tile");
+        this.removeCollider(x+1,y+1,"tile");
+
+        this.checkInvisibleColliders = true;
     }
     
     this.setSpriteSheets = function(ss){
@@ -102,8 +161,10 @@ function Map(sizeX, sizeY){
                     if (t!=null){
                         if (dir=='H'){
                             t.putItselfInMap(this.map, p, r);
+                            if (this.drawingHouse) this.baseCollidersRef.push([p,r,"BRICK"]);
                         }else if (dir=='V') {
                             t.putItselfInMap(this.map, r, p);
+                            if (this.drawingHouse) this.baseCollidersRef.push([r,p,"BRICK"]);
                         }
                     }
                 }
@@ -177,7 +238,8 @@ function Map(sizeX, sizeY){
             for (var i = this.invisibleColliders.length-1; i>=0; i--){
                 var invCol = this.invisibleColliders[i];
                 
-                if (this.isAroundSquareOfSameType("NONE", invCol.x, invCol.y)){
+                if (this.isAroundSquareOfSameType("NONE",invCol.x, invCol.y) || 
+                    this.map[invCol.y][invCol.x] === "STEEL") {
                     //console.log("inv", "x:",invCol.x, "y:",invCol.y);
                     this.collisionInstance.removeStaticCollider(invCol.x, invCol.y, "invisible");
                     this.invisibleColliders.splice(i,1);
@@ -221,12 +283,15 @@ function Map(sizeX, sizeY){
         for(var i=0; i<this.size.y; i+=1){
             for (var j=0; j<this.size.x; j+=1){
                 var tile = this.tiles[this.map[i][j]];
+                if (this.collisionInstance.existsStaticCollider(j,i,"tile")){
+                    continue;
+                }
                 if (tile != null && tile.hasCollider){
-                        collision.createStaticCollider({obj:this, type:"tile", subtype:tile.name, x:j, y:i, tile:tile}, {x:j*this.tileSize,y:i*this.tileSize, w:tile.size.x,h:tile.size.y}, 
+                        this.collisionInstance.createStaticCollider({obj:this, type:"tile", subtype:tile.name, x:j, y:i, tile:tile}, {x:j*this.tileSize,y:i*this.tileSize, w:tile.size.x,h:tile.size.y}, 
                                                         this.defaultCollision);
                 }
                 if (tile != null && tile.drawInvisibleCollider(this.map[i][j])){
-                        collision.createStaticCollider({obj:this, type:"invisible", x:j, y:i}, {x:j*this.tileSize, y:i*this.tileSize, w:16,h:16}, function(info,other){});
+                        this.collisionInstance.createStaticCollider({obj:this, type:"invisible", x:j, y:i}, {x:j*this.tileSize, y:i*this.tileSize, w:16,h:16}, function(info,other){});
                         this.invisibleColliders.push({x:j,y:i}); 
                 }
             }
@@ -253,7 +318,6 @@ function Map(sizeX, sizeY){
         }
     };
 
-    
     this.isAroundSquareOfSameType = function(type, x,y){
         return (this.map[y][x] === type && this.map[y+1][x] === type && this.map[y][x+1] === type && this.map[y+1][x+1] === type);
     };
