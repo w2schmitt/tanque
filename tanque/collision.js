@@ -39,7 +39,6 @@ function Collision(){
         for (var i=this.staticColliders.length-1; i>=0 ; i--){
             if (x === this.staticColliders[i].i.x && y === this.staticColliders[i].i.y && this.staticColliders[i].i.type === type){
                 return true;
-                //console.log("found collider");
             }
          }
 
@@ -72,26 +71,20 @@ function Collision(){
     
     this.computeCollisions = function(){
         //collision between static and dynamic colliders
-        //for (var dcol in this.dynamicColliders){
         for (var dc=this.dynamicColliders.length-1; dc>=0; dc-- ){
             var dcol = this.dynamicColliders[dc];
-            // static collider array can be modified inside this loop
-            for (var i=this.staticColliders.length-1; i>=0; i--) { //for (var scol in this.staticColliders)
+            for (var i=this.staticColliders.length-1; i>=0; i--) {
                 scol = this.staticColliders[i];
                 if (!scol) continue;
-
-                dobj = dcol.i.obj;
-                //console.log(dcol.i.offx);
+                dobj = dcol.i.obj;                
                 rect = {x:(dobj.pos.x+dcol.i.offx), y:(dobj.pos.y+dcol.i.offy), w:dcol.i.w, h:dcol.i.h };
                 if (this.overlap(rect,scol.r)){
                     dcol.func(dcol.i, scol.i);
                     scol.func(scol.i,dcol.i);
-                    //console.log("colidiu");
                 }
             }
             
             //collision between dynamic collider
-            //for (var dcol2 in this.dynamicColliders){
             for (var dc2=this.dynamicColliders.length-1; dc2>=0; dc2-- ){
                  dcol2 = this.dynamicColliders[dc2];
                  if (dcol2 === dcol) continue;
@@ -99,9 +92,7 @@ function Collision(){
                  dobj2 = dcol2.i.obj;
                  rect = {x:(dobj.pos.x+dobj.currentSpeed.x + dcol.i.offx), y:(dobj.pos.y+dobj.currentSpeed.y + dcol.i.offy), w:dcol.i.w, h:dcol.i.h };
                  rect2 = {x:(dobj2.pos.x+dobj2.currentSpeed.x + dcol2.i.offx), y:(dobj2.pos.y+dobj2.currentSpeed.y + dcol2.i.offy), w:dcol2.i.w, h:dcol2.i.h };
-                 //console.log(rect,rect2);
                  if (this.overlap(rect,rect2)){
-                    // console.log("colliding");
                     dcol.func(dcol.i,dcol2.i);
                     dcol2.func(dcol2.i,dcol.i);
                  }

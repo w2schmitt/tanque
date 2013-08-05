@@ -5,13 +5,13 @@
 - bug: inimigos do tipo 3 tem tiros muito rápidos, as vezes acabam atravessando os colliders dos bricks(8x8).
 		(possível solução: verificar a colisão também entre a posição final do bullet (nextFrame) e a posição atual pra ver se não tem um collider entre eles)
 
-- bug: quando o item "relógio" é ativado os próximos inimigos que nascem deveriam nascer paralizados, mas eles nascem e andam normal.
+[FIXED]: quando o item "relógio" é ativado os próximos inimigos que nascem deveriam nascer paralizados, mas eles nascem e andam normal.
 		(possível solução: o efeito está sendo aplicado para cada inimigo vivo individual, o controle de congelamento dos inimigos pode ser passado para o enemySpanwer e este decide quando congelar/descongelar os inimigos)
 
 - bug: items podem nascer em lugares impossíveis de pegar ou ainda dentro da base do player.
 		(possível solução: verificar no mapa se o item não está totalmente dentro de uma área impossível de pegar, ou talvez fazer o item dar spawn na posição de onde o inimigo morreu (isso seria diferente do orignal, mas faz sentido))
 
-- [DONE]: item pá transformar a casa em steel durante um tempo.
+[DONE]: item pá transformar a casa em steel durante um tempo.
 
 - not done: player levels 2,3 e 4, que aumentam com o item estrela.
 

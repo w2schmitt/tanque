@@ -3,15 +3,15 @@ function itemSpawner(){
     this.spawnArea = {x0:2*32,y0:1*32,x1:18*32,y1:14*32};
     this.allItems = [];
     this.collisionInstance;
-    this.enemies = null;
+    this.enemySpawner = null;
     this.map = null;
     
     this.setSpriteSheets = function(ss){
         this.itemSpritesheet = ss;
     }
 
-    this.setEnemiesInstance = function(e){
-        this.enemies = e;
+    this.setEnemySpawnerInstance = function(es){
+        this.enemySpawner = es;
     }
 
     this.setMapInstance = function(m){
@@ -64,51 +64,42 @@ function itemSpawner(){
     this.defaultCollision = function(info,other){
         var self = info.obj;
         if (other.type === "player"){
-            info.item.castEffect(other.obj, self.map, self.enemies);
+            info.item.castEffect(other.obj, self.map, self.enemySpawner);
             self.removeItem(info.item);
         }
     }
 
-    // the items can affect the player, the map and the enemies
+    // the items can affect the player, the map and the enemySpawner
     this.itemEffect = function(itemType){
-
-       
-
         if (itemType === 0) {           // estrela
             return null;
         }
         if (itemType === 1){            // granada
-            return function(player, map, enemies){
-                for (var i=enemies.length-1; i>=0; i--){
-                    enemies[i].die(4);
+            return function(player, map, eSpawner){
+                for (var i=eSpawner.enemies.length-1; i>=0; i--){
+                    eSpawner.enemies[i].die(4);
                 }
             };
         }
         if (itemType === 2){            // escudo
-            return function(player, map, enemies){
+            return function(player, map, eSpawner){
                 player.setShieldOn(15000);
             }
         }
         if (itemType === 3){            // casa de aço
-            return function(player, map, enemies){
+            return function(player, map, eSpawner){
                 map.enableSolidBase(15000);
             }
         }
         if (itemType === 4){            // vida +1
-            return function(player, map, enemies){
-                for (var i=enemies.length-1; i>=0; i--){
-                    player.lives++;
-                }
+            return function(player, map, eSpawner){
+                player.lives++;
             }
         }
         if (itemType === 5){            // relogio
-            return function(player, map, enemies){
-                for (var i=enemies.length-1; i>=0; i--){
-                    enemies[i].freeze(10000);
-                }
+            return function(player, map, eSpawner){
+                eSpawner.freezeEnemies(10000);
             }
         }
-
-
     }
 }

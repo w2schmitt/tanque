@@ -92,8 +92,11 @@ function Player(){
 
 
         } else if (this.isFrozen){
+            if (this.animationContext === null){
+                this.animationContext = this.spriteSheet.createContext(); 
+            }
+            this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext);
             this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext).stop();
-            this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext);
         } else {     
             if (this.isShielded){
                 this.shieldSprite = this.spriteSheet.getSprite("shield");
@@ -198,14 +201,8 @@ function Player(){
     }
 
     // froze player for a time
-    this.freeze = function(time){
+    this.freeze = function(){
         this.isFrozen = true;
-        setTimeout((function(self) {         //Self-executing func which takes 'this' as self
-                         return function() {   //Return a function in the context of 'self'
-                             self.isFrozen = false;
-                         };
-                     })(this),
-                     time );
     }
     
     this.die = function(optLives){

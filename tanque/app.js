@@ -142,7 +142,7 @@ function sketchProc(processing) {
             players[0].setInput(input);  
 
             mItemSpawner.setMapInstance(map1);
-            mItemSpawner.setEnemiesInstance(enemies);
+            mItemSpawner.setEnemySpawnerInstance(enemySpawner);
 
             mItemSpawner.spawnItem();
         }; // end setup

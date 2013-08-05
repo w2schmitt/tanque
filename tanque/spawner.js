@@ -14,6 +14,7 @@ function Spawner(){
     this.playerSpriteSheet = null;
     this.spawnSpriteSheet = null;
     this.IAinput = null;
+    this.freezingEnemies = false;
     
     
     this.setIAInput = function(ia){
@@ -68,7 +69,7 @@ function Spawner(){
             p.speed = 5;            
         } else if (e===3){
             p = this.createBasicEnemy();  
-            p.bulletSpeed = 11;              
+            p.bulletSpeed = 12;              
         } else if (e===4){
             p = this.createBasicEnemy(); 
             p.maxLives = 4;            
@@ -78,9 +79,30 @@ function Spawner(){
             p.subtype = e;
             p.points = e*100;
             p.subsubtype = subsubtype;
-            this.totalEnemies--;    
+            this.totalEnemies--; 
+
+            if (this.freezingEnemies){
+                p.isFrozen = true;
+            }   
         }
     }
+
+    this.freezeEnemies = function(time){
+        this.freezingEnemies = true;
+        for (var i in this.enemies){
+            this.enemies[i].isFrozen = true;
+        }
+
+        setTimeout((function(self) {         //Self-executing func which takes 'this' as self
+                         return function() {   //Return a function in the context of 'self'
+                            for (var i in self.enemies){
+                                self.enemies[i].isFrozen = false;
+                            }
+                            self.freezingEnemies = false;
+                         };
+                     })(this),
+                     time );
+    } 
     
     this.createBasicEnemy = function(){
         var p = new Player();
