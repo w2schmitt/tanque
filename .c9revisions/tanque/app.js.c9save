@@ -5,3 +5,4 @@
 {"ts":1375744949869,"patch":[[{"diffs":[[0,"random ("],[-1,"10"],[1,"5"],[0,") > 1)?1"]],"start1":15782,"start2":15782,"length1":18,"length2":17}]],"length":20172,"saved":false}
 {"ts":1375744983395,"patch":[[{"diffs":[[0,"(random("],[-1,"5"],[1,"4"],[0,") > 1){\n"]],"start1":15668,"start2":15668,"length1":17,"length2":17},{"diffs":[[0,"random ("],[-1,"5"],[1,"4"],[0,") > 1)?1"]],"start1":15782,"start2":15782,"length1":17,"length2":17}]],"length":20172,"saved":false}
 {"ts":1375745029614,"patch":[[{"diffs":[[0,"IA.value.fire = "],[1,"true;//"],[0,"(Math.floor(rand"]],"start1":15535,"start2":15535,"length1":32,"length2":39}]],"length":20179,"saved":false}
+{"ts":1375745270734,"patch":[[{"diffs":[[0,"x = "],[-1,"Math.floor(random(3)) -1;"],[1,"(random (2) > 1)?1:-1  "],[0,"\n   "]],"start1":15919,"start2":15919,"length1":33,"length2":31}]],"length":20177,"saved":false}

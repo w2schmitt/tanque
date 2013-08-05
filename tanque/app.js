@@ -282,7 +282,7 @@ function sketchProc(processing) {
                         IA.value.y = (random (4) > 1)?1:-1 
                     }else{
                         //same horizontam prob:
-                        IA.value.x = Math.floor(random(3)) -1;
+                        IA.value.x = (random (2) > 1)?1:-1  
                     }
                 }
                 /*if (random(25) < 1){
