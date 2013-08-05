@@ -12,7 +12,9 @@ function Bullet(x,y, sprite) {
     this.explosionRect = null;
     this.explosionColliderInfo = {x:0,y:0, w:0, h:0};
     this.remove = false;
+    this.castExplosion = true;
     this.exploded = false;
+    this.hit = false;
     
     
     this.update = function(){
@@ -42,19 +44,40 @@ function Bullet(x,y, sprite) {
         if (other.type === "tile"){
             if (!other.tile.bulletPassThrough){
                 var gridSize = other.obj.tileSize;
-                self.remove = true;    
+                self.remove = true;   
+                this.castExplosion = true; 
                 self.explosionColliderInfo = {x:(other.x*gridSize), y:(other.y*gridSize), w:other.tile.size.x, h:other.tile.size.y};
             }
         }
         else if (other.type === "bullet" && (other.obj.owner.type !== self.owner.type)){
             self.remove = true;
+            this.castExplosion = false;
         }
-        // in any collision, it should create an explosion:
-        if (self.remove && !this.exploded){
-            this.exploded = true;
-            allExplosions.push(new Explosion(self.pos.x-8,self.pos.y-8,explosionSpriteSheet, "Small"));
+        else if (other.type === "player" || (other.type === "enemy" && self.owner.type !== "enemy")) {
+            if (self.owner !== other.obj && !other.obj.spawning){
+                self.remove = true;
+                self.setBulletExplosion(self.pos.x-8, self.pos.y-8);
+            }
+            //console.log("teste");
+        }
+        else if (other.type === "general"){
+            self.remove = true;
+        }
+        //else if (other.type === "general" || other.type === "player" || other.type === "enemy"){
+        //    self.remove = true;
+        //    this.castExplosion = false;
+        //}
+        //
+        if (self.remove && this.castExplosion && !this.exploded){
+            self.setBulletExplosion(self.pos.x-8, self.pos.y-8);
+           
             //console.log("criou");
         }
+    }
+
+    this.setBulletExplosion = function(x,y){
+        this.exploded = true;
+        allExplosions.push(new Explosion(x,y,explosionSpriteSheet, "Small"));
     }
     
     this.createExplosionObject = function(){

@@ -71,7 +71,7 @@ function SpriteSheet(img){
 
     this.setSprite = function(x,y,name, resX, resY){
         var sprites_arr = this.getSpriteArray(resX,resY);
-        if (sprites_arr){
+        if (sprites_arr != null){
             this.spriteNames.push(name);
             this.spriteReferences[name] = sprites_arr[x][y]; 
         } else console.log("cannot found sprites with resolution: ",resX, resY);

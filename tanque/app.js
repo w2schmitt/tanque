@@ -20,9 +20,13 @@ function sketchProc(processing) {
             // Game GUI
 			gMenu = new GameMenu();
 
+            //general Flag
+            baseFlag = new General();
+            baseFlag.setCollision(collision);
+
             //item Spawner
             mItemSpawner = new itemSpawner();
-            mItemSpawner.setCollision(collision);
+            mItemSpawner.setCollision(collision);            
 			
             // Spawners
             enemySpawner = new Spawner();
@@ -33,7 +37,7 @@ function sketchProc(processing) {
 
             // Players
             players = [new Player()];
-            players[0].spawningPos = {x:16*20, y:16*25};
+            players[0].spawningPos = {x:16*15, y:16*27};
             for (var p in players){players[p].setCollisionInstance(collision);}
             
             enemies = enemySpawner.enemies; // create alias array for the enemy spanwer enemies
@@ -69,11 +73,11 @@ function sketchProc(processing) {
             
 
             // build scenary 
-            map1.drawRows(["BRICK"], 16,27);
+            map1.drawRows(["BRICK"], 16);
             map1.drawRows(["GRASS","GRASS", "BRICK", "BRICK"],12,13, 23,24);
 
             map1.drawIntervals('V',["WATER", "GRASS", "STEEL"], [6,7, 10,11], [6,9], [11,20], [23,25]);
-            map1.drawIntervals('H',["WATER"], [6,7], [12,20], [11,20], [23,27]);
+            map1.drawIntervals('H',["STEEL"], [6,7], [12,20], [23,27]);
             
             map1.drawRects(["SNOW"], [32,14,5,9], [8,14,2,9]);
             map1.drawPattern([["STEEL","GRASS","GRASS","STEEL"],
@@ -102,6 +106,8 @@ function sketchProc(processing) {
             mItemSpawner.setSpriteSheets(itemSpriteSheet);   
             enemySpawner.setSpriteSheets(enemySpriteSheet, shootSpriteSheet, explosionSpriteSheet, playerSpriteSheet);
             map1.setSpriteSheets(mapSpriteSheet);
+            baseFlag.setSpriteSheet(playerSpriteSheet);
+            baseFlag.setExplosionSpriteSheet(explosionSpriteSheet);
             
             
             // Create Input for players and IA
@@ -134,6 +140,9 @@ function sketchProc(processing) {
             enemySpawner.setIAInput(IA);
  
             players[0].setInput(input);  
+
+            mItemSpawner.setMapInstance(map);
+            mItemSpawner.setEnemiesInstance(enemies);
         }; // end setup
          
     
@@ -153,6 +162,7 @@ function sketchProc(processing) {
                                     
                     playerSpriteSheet.setRectSprites( [4,0,4,1], 32,32, ["spawn1", "spawn2", "spawn3", "spawn4"]);
                     playerSpriteSheet.setRectSprites( [0,0,2,1], 32,32, ["shield1", "shield2"]);
+                    playerSpriteSheet.setRectSprites( [2,0,2,1], 32,32, ["generalAlive", "generalDead"]);
                     
                     playerSpriteSheet.setAnimation(["playerUp1","playerUp2"],"player1Up",15);
                     playerSpriteSheet.setAnimation(["playerRight1","playerRight2"],"player1Right",15);
@@ -188,9 +198,6 @@ function sketchProc(processing) {
                         enemySpriteSheet.setAnimation(["enemy"+i+"Down1"  ,"enemy"+i+"Down2" ] ,"enemy"+i+"Down"  ,15); 
                         enemySpriteSheet.setAnimation(["enemy"+i+"Left1"  ,"enemy"+i+"Left2" ] ,"enemy"+i+"Left"  ,15); 
                     }
-
-                    // animation for special enemies
-
                 }
             }else return false;
                             
@@ -208,8 +215,8 @@ function sketchProc(processing) {
 
            if (itemSpriteSheet.loaded()){
                 if (!itemSpriteSheet.initialized){
-                    itemSpriteSheet.createSprites(32,32, 7,1 );
-                    itemSpriteSheet.setRectSprites([0,0,7,1],32,32, ["i0","i1","i2","i3","i4","i5", "blank"]);
+                    itemSpriteSheet.createSprites(32,32, 8,1 );
+                    itemSpriteSheet.setRectSprites([0,0,8,1],32,32, ["i0","i1","i2","i3","i4","i5", "blank", "500points"]);
                     
                     for (var i=0; i<=5; i++){
                         itemSpriteSheet.setAnimation(["i"+i, "blank"], "item"+i, 3);
@@ -230,23 +237,29 @@ function sketchProc(processing) {
             
             if (shootSpriteSheet.loaded()){
                 if (!shootSpriteSheet.initialized){
-                    shootSpriteSheet.createSprites(16,16, 4,1 );
-                    shootSpriteSheet.setRectSprites([0,0,4,1],16,16, ["bulletUp","bulletLeft","bulletRight","bulletDown"]);
+                    shootSpriteSheet.createSprites(16,16, 2,2 );
+                    shootSpriteSheet.setRectSprites([0,0,2,2],16,16, ["bulletUp","bulletLeft","bulletRight","bulletDown"]);
                 }                
             }else return false;
             
             if(explosionSpriteSheet.loaded()){
                 if (!explosionSpriteSheet.initialized){
-                    explosionSpriteSheet.createSprites(32,32, 3,1,16*4,0); //offset inicial pra n pegar as bullets
-                    explosionSpriteSheet.setRectSprites( [0,0,3,1], 32,32, ["explosionSmall1", "explosionSmall2", "explosionSmall3"]);
+                    explosionSpriteSheet.createSprites(32,32, 4,2,16*2,0); //offset inicial pra n pegar as bullets
+                    explosionSpriteSheet.setRectSprites( [0,0,4,1], 32,32, ["explosionSmall1", "explosionSmall2", "explosionSmall3", "0points"]);
+                    explosionSpriteSheet.setRectSprites( [0,1,4,1], 32,32, ["100points","200points","300points","400points"]);
                     
-                    explosionSpriteSheet.createSprites(64,64, 3,1,16*4 + 32*3,0); //offset inicial pra n pegar as bullets e explosoes pequenas
+                    explosionSpriteSheet.createSprites(64,64, 3,1,16*2 + 32*4,0); //offset inicial pra n pegar as bullets e explosoes pequenas
                     explosionSpriteSheet.setRectSprites( [0,0,2,1], 64,64, ["explosionBig1", "explosionBig2"]);
                     
                     explosionSpriteSheet.setAnimation(["explosionSmall1","explosionSmall2","explosionSmall3"],"explosionSmall",15, false);
                     explosionSpriteSheet.setAnimation(["explosionSmall1","explosionSmall2","explosionSmall3", //small start
-                                                        "explosionBig1", "explosionBig2"  ,"explosionSmall3"], //small end
-                                                        "explosionBig",15,false);
+                                                       "explosionBig1", "explosionBig2"  ,"explosionSmall3", "0points"], //small end
+                                                       "explosionBig",15,false);
+                    for (var i=1; i<=4; i++){
+                        explosionSpriteSheet.setAnimation(["explosionSmall1","explosionSmall2","explosionSmall3", //small start
+                                                            "explosionBig1", "explosionBig2"  ,"explosionSmall3", i*100+"points"], //small end
+                                                            "explosionBig"+i*100,15,false);
+                    }
                 }
             }else return false;
 
@@ -266,13 +279,7 @@ function sketchProc(processing) {
                     IA.value.y = Math.floor(random(3)) -1;
                 }                
                 IA.value.fire = (Math.floor(random(3)) == 0);
-            }
-            
-            //item random em momento random
-            //if (random(60) < 1){
-            //    mItemSpawner.spawnItem();
-            //}
-           
+            }          
             
             //update player position
             //do a tree node hierarchy in the future (wut? não consegui gravar)
@@ -287,6 +294,9 @@ function sketchProc(processing) {
             // DRAWING COMMANDS
             // erase background
             processing.background(0);
+
+            //draw baseFlag
+            processing.image(baseFlag.getCurrentSprite(), baseFlag.pos.x, baseFlag.pos.y, 32,32);
 
             // draw map
             map1.drawMap(processing);

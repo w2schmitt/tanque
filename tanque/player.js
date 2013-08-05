@@ -3,10 +3,11 @@ function Player(){
     this.pos = {x:16*6, y:16*6};
     this.spawningPos = {x:16*6, y:16*6};
     this.posPrevious = {x:0,y:0};
-    this.lives = 1;
+    this.lives = 4;  // number of lives the player can die;
+    this.health = 1; // enemy healt
     this.maxLives = 1; // when lives pass the max lives the tank die (done this way to use the value lives in the animation)
     this.speed = 2;
-    this.bulletSpeed = 7;
+    this.bulletSpeed = 8;
     this.type = "player";
     this.subtype = 1;
     this.subsubtype = ""; // this tank carries an item
@@ -21,19 +22,18 @@ function Player(){
     this.shieldSprite = null;
     this.direction = {Up:"Up",Right:"Right",Down:"Down",Left:"Left"};//fazendo dessa forma pq com o enum n tem garantia q vai ser string, e o nome dos sprites pode mudar no futuro
     this.animationContext = null;
-    //this.shieldAnimContext = null;
     this.currentDirection = this.direction.Up;
     this.currentCollisionFunc = this.defaultCollision;
     this.fireCooldownTime = 0.5*1000; //in miliseconds
     this.spawnTime = 1.5*1000; // in ms
     this.spawning = false;
     this.isShielded = false;
+    this.isFrozen = false;
     this.ignore = [];
     this.isDead = false;
     this.spawnerInstance = null;
     this.itemSpanwerInstance = null;
-    //this.bornTogether = false;
-    //this.shieldTime = 1*1000; // in ms
+    this.points = null;
     
     this.firstUpdate = true;
     this.maxBullets = 1;
@@ -87,9 +87,13 @@ function Player(){
         }
         
         if (this.spawning) {
-            this.currentSprite = this.spawnSpriteSheet.getSprite("spawn");            
+            this.currentSprite = this.spawnSpriteSheet.getSprite("spawn");  
         } else if (this.isDead){
-            
+
+
+        } else if (this.isFrozen){
+            this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext).stop();
+            this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext);
         } else {     
             if (this.isShielded){
                 this.shieldSprite = this.spriteSheet.getSprite("shield");
@@ -161,15 +165,15 @@ function Player(){
                     this.animationContext = this.spriteSheet.createContext(); 
                 }
                 //console.log(this.spriteSheet.getSprite("player"+this.currentDirection,this.animationContext));
-                this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext);
+                this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext);
             }
             //console.log(this.type+this.subtype+this.currentDirection);
             
-            //console.log(""+this.type+this.subtype+this.currentDirection+this.lives);
+            //console.log(""+this.type+this.subtype+this.currentDirection+this.health);
             if (this.input.value.x === 0 && this.input.value.y === 0 ){
-                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext).stop();
+                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext).stop();
             } else {
-                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.lives-1))+this.currentDirection,this.animationContext).continue();
+                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext).continue();
             }    
         } 
         //if (this.isDead){
@@ -192,17 +196,29 @@ function Player(){
         this.canFire = true;
         
     }
+
+    // froze player for a time
+    this.freeze = function(time){
+        this.isFrozen = true;
+        setTimeout((function(self) {         //Self-executing func which takes 'this' as self
+                         return function() {   //Return a function in the context of 'self'
+                             self.isFrozen = false;
+                         };
+                     })(this),
+                     time );
+    }
     
-    this.die = function(){
-        //this.lives++;
+    this.die = function(optLives){
+        //this.health++;
         if (this.subsubtype === "special"){
             //spawn item
             this.itemSpanwerInstance.spawnItem();
             this.subsubtype = "";
         }
         
-        if (this.type==="player" || (++this.lives) > this.maxLives){
-            allExplosions.push(new Explosion(this.pos.x,this.pos.y,explosionSpriteSheet, "Big"));
+        if (this.type==="player" || (this.health+=optLives||1) > this.maxLives){
+            this.isFrozen = false;
+            allExplosions.push(new Explosion(this.pos.x,this.pos.y,explosionSpriteSheet, "Big", this.points));
             this.shieldSprite = null;
             //this.bullets = []; // erase all player bullets
             if (this.type==="player"){
@@ -231,7 +247,7 @@ function Player(){
     
     this.isThisBulletFromThisPlayer = function(bullet){
         for (var i=this.bullets.length-1; i>=0; i--){
-            if (this.bullets[i] == bullet){
+            if (this.bullets[i] === bullet){
                 return true;
             }
         }
@@ -244,7 +260,7 @@ function Player(){
     this.defaultCollision = function(info, other){      // function that is called when this obj collides with something
         var self = info.obj;
         var gridSize = 16;
-        if (other.type==="tile"  || other.type==="invisible"){
+        if (other.type==="tile"  || other.type==="invisible" || other.type==="general"){
             info.obj.pos.y = Math.round((info.obj.pos.y )/gridSize)*gridSize;
             info.obj.pos.x = Math.round((info.obj.pos.x )/gridSize)*gridSize;  
         }
@@ -284,10 +300,9 @@ function Player(){
         }
         
         
-        if (self.spawning === false && other.type === "bullet" && !other.obj.remove){
-            
-            if (other.obj.owner.type !== self.type){    // if they are of different class, they can kill each other (player hit enemy, or enemy hit player)
-                other.obj.remove = true;
+        if (self.spawning === false && other.type === "bullet" && !self.isShielded && !other.obj.hit ){            
+            if (other.obj.owner.type !== self.type){    // if they are of different class, they can kill each other (player hit enemy, or enemy hit player)    
+                other.obj.hit = true;             
                 self.die();
             } else {
       

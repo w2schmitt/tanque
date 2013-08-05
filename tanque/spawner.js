@@ -76,6 +76,7 @@ function Spawner(){
         
         if (p!==null){            
             p.subtype = e;
+            p.points = e*100;
             p.subsubtype = subsubtype;
             this.totalEnemies--;    
         }

@@ -3,9 +3,19 @@ function itemSpawner(){
     this.spawnArea = {x0:2*32,y0:1*32,x1:18*32,y1:14*32};
     this.allItems = [];
     this.collisionInstance;
+    this.enemies = null;
+    this.map = null;
     
     this.setSpriteSheets = function(ss){
         this.itemSpritesheet = ss;
+    }
+
+    this.setEnemiesInstance = function(e){
+        this.enemies = e;
+    }
+
+    this.setMapInstance = function(m){
+        this.map = m;
     }
     
     this.setCollision = function(col){
@@ -19,7 +29,7 @@ function itemSpawner(){
         pos.y = gridAlign(Math.random()*(this.spawnArea.y1 - this.spawnArea.y0)  + this.spawnArea.y0);
         var itemSubtype = Math.floor(Math.random()*6);
         
-        var item = new Item (pos.x,pos.y,this.itemSpritesheet,itemSubtype);
+        var item = new Item (pos.x,pos.y,this.itemSpritesheet,itemSubtype, this.itemEffect(itemSubtype));
         this.allItems.push(item);
         
         this.collisionInstance.createStaticCollider({obj:this, type:"item", subtype:itemSubtype, item:item, x:pos.x, y:pos.y}, {x:pos.x,y:pos.y, w:32,h:32}, 
@@ -28,8 +38,16 @@ function itemSpawner(){
     
     this.removeItem = function(item){
         this.removeCollider(item);
-        var i = this.allItems.indexOf(item);
-        this.allItems.splice(i,1); 
+        item.itemPicked = true;
+        setTimeout((function(self, item) {            //Self-executing func which takes 'this' as self
+                         return function() {    //Return a function in the context of 'self'                             
+                             var i = self.allItems.indexOf(item);
+                             self.allItems.splice(i,1); 
+                         };
+                     })(this, item),
+                     1500 );
+
+       
     }
     
     this.removeCollider = function(item, opt_x, opt_y, type){
@@ -46,8 +64,55 @@ function itemSpawner(){
     this.defaultCollision = function(info,other){
         var self = info.obj;
         if (other.type === "player"){
+            info.item.castEffect(other.obj, self.map, self.enemies);
             self.removeItem(info.item);
-            console.log("player pegou item");
         }
+    }
+
+    // the items can affect the player, the map and the enemies
+    this.itemEffect = function(itemType){
+
+        if (itemType === 0) {           // estrela
+            return null;
+        }
+
+        if (itemType === 1){            // granada
+            return function(player, map, enemies){
+                for (var i=enemies.length-1; i>=0; i--){
+                    enemies[i].die(4);
+                }
+            };
+        }
+
+        if (itemType === 2){            // escudo
+            return function(player, map, enemies){
+                player.setShieldOn(15000);
+            }
+        }
+
+        if (itemType === 3){            // casa de aço
+            return function(player, map, enemies){
+                //map.setSteelBase(15000);
+            }
+        }
+
+
+        if (itemType === 4){            // vida +1
+            return function(player, map, enemies){
+                for (var i=enemies.length-1; i>=0; i--){
+                    player.lives++;
+                }
+            }
+        }
+
+        if (itemType === 5){            // relogio
+            return function(player, map, enemies){
+                for (var i=enemies.length-1; i>=0; i--){
+                    enemies[i].freeze(10000);
+                }
+            }
+        }
+
+
     }
 }

@@ -21,7 +21,10 @@ function Map(sizeX, sizeY){
             this.drawCols(["GRAY"], 0,1,36,37,38,39);
             this.drawRows(["GRAY"], 0,29);
 
-            // put the code to build the player general (flag)
+            // put the code to build the player general base (flag)
+            this.drawIntervals('V', ["BRICK"], [17,20], [27,28]);
+            this.drawIntervals('H', ["BRICK"], [26], [17,20]);
+            //map1.drawIntervals('V',["WATER", "GRASS", "STEEL"], [6,7, 10,11], [6,9], [11,20], [23,25]);
 
             this.createColliderForTiles();
     }
