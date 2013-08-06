@@ -4,8 +4,9 @@ function Bullet(x,y, sprite) {
     this.owner = null;
     //this.spriteSheet = null;
     this.currentSprite = sprite;
-    this.direction = {Up:"Up",Right:"Right",Down:"Down",Left:"Left"};
+    this.direction = {Up:"Up",Right:"Right",Down:"Down",Left:"Left"};    
     this.currentDirection = null;
+    this.intDirection = {x:0,y:0};
     this.currentSpeed = {x:0,y:0}
     this.bulletSpeed = 9;
     this.bulletSize = 16;
@@ -15,6 +16,7 @@ function Bullet(x,y, sprite) {
     this.castExplosion = true;
     this.exploded = false;
     this.hit = false;
+    this.breakSteel = false;
     
     
     this.update = function(){
@@ -25,18 +27,26 @@ function Bullet(x,y, sprite) {
         with (this.direction){ //with lixo
             if (this.currentDirection == Up){
                 this.currentSpeed.y -= this.bulletSpeed;
+                this.intDirection.y = -1;
             }
             if (this.currentDirection == Down){
                 this.currentSpeed.y += this.bulletSpeed;
+                this.intDirection.y = 1;
             }
             if (this.currentDirection == Left){
                 this.currentSpeed.x -= this.bulletSpeed;
+                this.intDirection.x = -1;
             }
             if (this.currentDirection == Right){
                 this.currentSpeed.x += this.bulletSpeed;
+                this.intDirection.x = 1;
             }
             
         }
+    }
+
+    this.getIntDirection = function(){
+
     }
     
     this.defaultCollision = function(info, other){
@@ -93,7 +103,7 @@ function Bullet(x,y, sprite) {
         }
         
         this.explosionRect = r;
-        return {obj:{pos:this.explosionColliderInfo, currentSpeed:{x:0,y:0}}, type:"explosion" ,w:r.w, h:r.h};
+        return {obj:{pos:this.explosionColliderInfo, breakSteel:this.breakSteel, currentSpeed:{x:0,y:0}}, type:"explosion" ,w:r.w, h:r.h};
     }
     
     this.deafultExplosionCollision = function(info, other){

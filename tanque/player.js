@@ -3,11 +3,12 @@ function Player(){
     this.pos = {x:16*6, y:16*6};
     this.spawningPos = {x:16*6, y:16*6};
     this.posPrevious = {x:0,y:0};
+    this.level = "";
     this.lives = 4;  // number of lives the player can die;
     this.health = 1; // enemy healt
     this.maxLives = 1; // when lives pass the max lives the tank die (done this way to use the value lives in the animation)
-    this.speed = 1.3;
-    this.bulletSpeed = 8;
+    this.speed = 1.2;
+    this.bulletSpeed = 5;
     this.type = "player";
     this.subtype = 1;
     this.subsubtype = ""; // this tank carries an item
@@ -24,7 +25,7 @@ function Player(){
     this.animationContext = null;
     this.currentDirection = this.direction.Up;
     this.currentCollisionFunc = this.defaultCollision;
-    this.fireCooldownTime = 0.30*1000; //in miliseconds
+    this.fireCooldownTime = 0.35*1000; //in miliseconds
     this.spawnTime = 1.5*1000; // in ms
     this.spawning = false;
     this.isShielded = false;
@@ -35,11 +36,41 @@ function Player(){
     this.itemSpanwerInstance = null;
     this.points = null;    
     this.firstUpdate = true;
-    this.maxBullets = 2;
+    this.maxBullets = 1;
     this.canFire = true;
     this.bullets = [];
+    this.doubleExplosionBullets = false;
+    this.breakSteel = false;
     
     this.collisionInstance = null;
+
+    this.upgradeLevel = function(newLevel_opt){
+        this.level++;
+        if (newLevel_opt != null) this.level = newLevel_opt;
+        
+        if (this.level>4) this.level=4;
+
+        if (this.level==1){
+            this.bulletSpeed = 5;
+            this.speed = 1.2;
+        }
+        if (this.level==2){
+            this.bulletSpeed = 7.5;
+            this.speed = 1.3;
+        }
+        if (this.level==3){
+            players[0].bulletSpeed = 7.5;
+            this.maxBullets = 2;
+            this.speed = 1.3;
+        }
+        if (this.level==4){
+            this.bulletSpeed = 7.5;
+            this.doubleExplosionBullets = true;
+            this.breakSteel = true;
+            this.maxBullets = 2;
+            this.speed = 1.3;
+        }
+    }
     
     this.setItemSpawner = function(is){
         this.itemSpanwerInstance = is;
@@ -94,8 +125,8 @@ function Player(){
             if (this.animationContext === null){
                 this.animationContext = this.spriteSheet.createContext(); 
             }
-            this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext);
-            this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext).stop();
+            this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.health-1))+this.currentDirection+this.level,this.animationContext);
+            this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection+this.level,this.animationContext).stop();
         } else {     
             if (this.isShielded){
                 this.shieldSprite = this.spriteSheet.getSprite("shield");
@@ -145,6 +176,7 @@ function Player(){
                     var newbullet = new Bullet(this.pos.x +gridSize/2, this.pos.y +gridSize/2, bulletSprite);
                    
                     newbullet.currentDirection = this.currentDirection;
+                    newbullet.breakSteel = this.breakSteel;
                     newbullet.bulletSpeed = this.bulletSpeed;
                     newbullet.calculateSpeed();
                     newbullet.owner = this;
@@ -167,15 +199,15 @@ function Player(){
                     this.animationContext = this.spriteSheet.createContext(); 
                 }
                 //console.log(this.spriteSheet.getSprite("player"+this.currentDirection,this.animationContext));
-                this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext);
+                this.currentSprite = this.spriteSheet.getSprite(this.subsubtype+ this.type+(this.subtype+(this.health-1))+this.currentDirection+this.level,this.animationContext);
             }
             //console.log(this.type+this.subtype+this.currentDirection);
             
             //console.log(""+this.type+this.subtype+this.currentDirection+this.health);
             if (this.input.value.x === 0 && this.input.value.y === 0 ){
-                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext).stop();
+                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection+this.level,this.animationContext).stop();
             } else {
-                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection,this.animationContext).continue();
+                this.spriteSheet.getAnimation(this.subsubtype+this.type+(this.subtype+(this.health-1))+this.currentDirection+this.level,this.animationContext).continue();
             }    
         } 
         //if (this.isDead){
@@ -218,6 +250,7 @@ function Player(){
             this.shieldSprite = null;
             //this.bullets = []; // erase all player bullets
             if (this.type==="player"){
+                this.upgradeLevel(1);
                 this.spawnPlayer();
             } else {
                 this.isDead = true;
@@ -233,10 +266,18 @@ function Player(){
             if (this.bullets[i].remove){
                 this.collisionInstance.removeDynamicCollider( this.bullets[i] );
                 //create new collider for explosion
-                var explinfo = this.bullets[i].createExplosionObject()
+                var explinfo = this.bullets[i].createExplosionObject();
+
                 this.collisionInstance.createDynamicCollider(explinfo, this.bullets[i].deafultExplosionCollision, this.bullets[i].explosionRect.offx, this.bullets[i].explosionRect.offy);
                 setTimeout((function(self) { return function() { self.col.removeDynamicCollider(self.obj)};})({col:this.collisionInstance, obj:explinfo.obj}), 200); // <--- bah, to muito louco, wololo
-                this.bullets.splice(i,1);              
+                            
+                if (this.doubleExplosionBullets){
+                    var explinfo2 = this.bullets[i].createExplosionObject();
+                    var bulletdir = this.bullets[i].intDirection;
+                    this.collisionInstance.createDynamicCollider(explinfo2, this.bullets[i].deafultExplosionCollision, this.bullets[i].explosionRect.offx+bulletdir.x*8, this.bullets[i].explosionRect.offy+bulletdir.y*8);
+                    setTimeout((function(self) { return function() { self.col.removeDynamicCollider(self.obj)};})({col:this.collisionInstance, obj:explinfo2.obj}), 200); // <--- bah, to muito louco, wololo
+                }
+                this.bullets.splice(i,1);  
             }
         }
     }

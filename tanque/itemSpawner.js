@@ -72,7 +72,9 @@ function itemSpawner(){
     // the items can affect the player, the map and the enemySpawner
     this.itemEffect = function(itemType){
         if (itemType === 0) {           // estrela
-            return null;
+            return function(player, map, eSpawner){
+                player.upgradeLevel();
+            };
         }
         if (itemType === 1){            // granada
             return function(player, map, eSpawner){

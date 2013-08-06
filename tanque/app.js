@@ -38,7 +38,8 @@ function sketchProc(processing) {
             // Players
             players = [new Player()];
             players[0].spawningPos = {x:16*15, y:16*27};
-            players[0].bulletSpeed = 7.5;
+            players[0].level=1;
+
             for (var p in players){players[p].setCollisionInstance(collision);}
             
             enemies = enemySpawner.enemies; // create alias array for the enemy spanwer enemies
@@ -146,9 +147,19 @@ function sketchProc(processing) {
             mItemSpawner.setEnemySpawnerInstance(enemySpawner);
 
             mItemSpawner.spawnItem();
-        }; // end setup
+
+            setInterval((function(col) {        
+                         return function() { col.computeCollisions(); }; 
+                        })(collision), 5 );
+                      
+
+            //setInterval((function(col){return function(){col.computeCollisions();}}(collision), 100));
+        };  // end setup
          
     
+    //function fixedUpdate(){
+    //    console.log("teste");
+    //}
     
     // Override draw function, by default it will be called 60 times per second
     processing.draw = function() {
@@ -161,16 +172,21 @@ function sketchProc(processing) {
             if (playerSpriteSheet.loaded()){
                 if (!playerSpriteSheet.initialized){
                     playerSpriteSheet.createSprites(32,32, 8,9);
-                    playerSpriteSheet.setRectSprites( [0,1,8,1], 32,32, ["playerUp1", "playerRight1","playerDown1","playerLeft1", "playerUp2", "playerRight2","playerDown2","playerLeft2"]);    //player1 - frame1 e frame2
+                    for (var i=1; i<=4; i++){
+                        playerSpriteSheet.setRectSprites( [0,i,8,1], 32,32, ["playerUp1"+i, "playerRight1"+i,"playerDown1"+i,"playerLeft1"+i, "playerUp2"+i, "playerRight2"+i,"playerDown2"+i,"playerLeft2"+i]);
+                        playerSpriteSheet.setAnimation(["playerUp1"+i,"playerUp2"+i],"player1Up"+i,15);
+                        playerSpriteSheet.setAnimation(["playerRight1"+i,"playerRight2"+i],"player1Right"+i,15);
+                        playerSpriteSheet.setAnimation(["playerDown1"+i,"playerDown2"+i],"player1Down"+i,15); 
+                        playerSpriteSheet.setAnimation(["playerLeft1"+i,"playerLeft2"+i],"player1Left"+i,15); 
+                    }
                                     
                     playerSpriteSheet.setRectSprites( [4,0,4,1], 32,32, ["spawn1", "spawn2", "spawn3", "spawn4"]);
                     playerSpriteSheet.setRectSprites( [0,0,2,1], 32,32, ["shield1", "shield2"]);
                     playerSpriteSheet.setRectSprites( [2,0,2,1], 32,32, ["generalAlive", "generalDead"]);
                     
-                    playerSpriteSheet.setAnimation(["playerUp1","playerUp2"],"player1Up",15);
-                    playerSpriteSheet.setAnimation(["playerRight1","playerRight2"],"player1Right",15);
-                    playerSpriteSheet.setAnimation(["playerDown1","playerDown2"],"player1Down",15); 
-                    playerSpriteSheet.setAnimation(["playerLeft1","playerLeft2"],"player1Left",15); 
+                    
+                  
+
                     
                     playerSpriteSheet.setAnimation(["shield1", "shield2"], "shield", 25);
                     
@@ -305,7 +321,7 @@ function sketchProc(processing) {
             }
             
             // do the realistic physics computations
-            collision.computeCollisions();
+            //collision.computeCollisions();
             
             
             // DRAWING COMMANDS

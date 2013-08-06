@@ -307,7 +307,7 @@ function Map(sizeX, sizeY){
     this.defaultCollision = function(info,other){
         var self = info.obj;
         if (other.type === "explosion"){
-            if (info.tile.isBreakable){               
+            if (info.tile.isBreakable || (other.obj.breakSteel && info.subtype=="STEEL")){               
                 self.removeCollider(info.x, info.y, "tile");
                 //console.log("map", "x:", info.x, "y:",info.y);
                 self.map[info.y][info.x] = "NONE";                
