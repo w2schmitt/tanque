@@ -66,10 +66,10 @@ function Spawner(){
             p = this.createBasicEnemy();            
         } else if (e===2){
             p = this.createBasicEnemy(); 
-            p.speed = 5;            
+            p.speed = 3.0;            
         } else if (e===3){
             p = this.createBasicEnemy();  
-            p.bulletSpeed = 12;              
+            p.bulletSpeed = 7.5;              
         } else if (e===4){
             p = this.createBasicEnemy(); 
             p.maxLives = 4;            
@@ -108,13 +108,17 @@ function Spawner(){
         var p = new Player();
         p.spawningPos = this.spawnPos[this.spawnCounter++%this.spawnPos.length];
         p.type = "enemy";
+        p.speed = 0.85;
+        p.bulletSpeed = 5;
+        p.maxBullets = 1;
         p.setItemSpawner(this.itemSpawnerInstance);
         p.spriteSheet = this.playerSpriteSheet; 
         p.bulletSpriteSheet = this.bulletSpriteSheet;
         p.explosionSpritesheet = this.explosionSpriteSheet;
         p.spawnSpriteSheet = this.spawnSpriteSheet;
         p.setCollisionInstance(this.collisionInstance);
-        p.setInput(this.IAinput.clone());        
+        p.setInput(this.IAinput.clone()); 
+
        
         p.spawnerInstance = this;
         this.enemies.push(p);

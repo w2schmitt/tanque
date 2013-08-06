@@ -6,7 +6,7 @@ function Player(){
     this.lives = 4;  // number of lives the player can die;
     this.health = 1; // enemy healt
     this.maxLives = 1; // when lives pass the max lives the tank die (done this way to use the value lives in the animation)
-    this.speed = 2;
+    this.speed = 1.3;
     this.bulletSpeed = 8;
     this.type = "player";
     this.subtype = 1;
@@ -24,7 +24,7 @@ function Player(){
     this.animationContext = null;
     this.currentDirection = this.direction.Up;
     this.currentCollisionFunc = this.defaultCollision;
-    this.fireCooldownTime = 0.5*1000; //in miliseconds
+    this.fireCooldownTime = 0.30*1000; //in miliseconds
     this.spawnTime = 1.5*1000; // in ms
     this.spawning = false;
     this.isShielded = false;
@@ -33,10 +33,9 @@ function Player(){
     this.isDead = false;
     this.spawnerInstance = null;
     this.itemSpanwerInstance = null;
-    this.points = null;
-    
+    this.points = null;    
     this.firstUpdate = true;
-    this.maxBullets = 1;
+    this.maxBullets = 2;
     this.canFire = true;
     this.bullets = [];
     

@@ -12,7 +12,7 @@ function sketchProc(processing) {
             
             var resolution = {x:640,y:480}; // 20x15 tiles
             processing.size(resolution.x,resolution.y);   
-            processing.frameRate(30);
+            processing.frameRate(60);
             
             // Collision
             collision = new Collision();   
@@ -38,6 +38,7 @@ function sketchProc(processing) {
             // Players
             players = [new Player()];
             players[0].spawningPos = {x:16*15, y:16*27};
+            players[0].bulletSpeed = 7.5;
             for (var p in players){players[p].setCollisionInstance(collision);}
             
             enemies = enemySpawner.enemies; // create alias array for the enemy spanwer enemies
