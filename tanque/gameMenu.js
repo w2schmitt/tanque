@@ -1,8 +1,12 @@
 
 function GameMenu(){
-    this.initPos = {x:37*16, y:3*16};
+    this.initPos = {x:33*16, y:3*16};
+    this.stageFlagPos = {x:33*16, y:24*16};
+    this.player1Pos = {x:33*16, y:16*16};
     this.spriteSheet = null;
     this.numOfEnemies = 0;
+    this.numOflives = 0;
+    this.currentMap = 0;
     
     this.setNumberOfEnemies = function(num){
         this.numOfEnemies = num;
@@ -25,8 +29,22 @@ function GameMenu(){
                 context.image(this.spriteSheet.getSprite("enemyIcon"), this.initPos.x+col*16, this.initPos.y+row*16, 16, 16);
                 row += 1;
             }
-            
-            
         }
+        context.textFont(context.loadFont("pixelated.ttf"));
+        context.fill(0, 0, 0);
+        
+        context.textSize(20);
+        
+        // player1 icon
+        context.image(this.spriteSheet.getSprite("playerIcon"),  this.player1Pos.x,  this.player1Pos.y, 16,16);
+        context.text("P-1", 33.07*16, 15.7*16);
+        context.text(this.numOflives, 34.25*16, 17*16);
+        
+        // flag icon
+        context.image(this.spriteSheet.getSprite("flagIcon"),  this.stageFlagPos.x,  this.stageFlagPos.y, 32,32);
+       
+        context.textSize(26);
+        
+        context.text(this.currentMap+1+"", 34*16, 27*16);
     }
 }

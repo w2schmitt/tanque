@@ -1,4 +1,5 @@
 
+tileNames = ["NONE","BRICK","STEEL","GRASS","WATER","WATER","SNOW","GRAY"];
 
 function Map(sizeX, sizeY){
     this.tileSize = 8;
@@ -9,7 +10,10 @@ function Map(sizeX, sizeY){
     this.spriteSheet8x8 = null;
     this.postDrawTiles = [];
     this.postDrawIndexes = [];
-    this.collisionInstance = null;    
+    this.collisionInstance = null;  
+    this.currentMap = -1;
+    this.borders = {left:4, right:10, top:2, bottom:2};
+    this.enemySpawnerInstance;
     
     this.checkInvisibleColliders = false;
     this.invisibleColliders = [];
@@ -17,25 +21,46 @@ function Map(sizeX, sizeY){
     this.drawingHouse = false;
     //this.tilesInstance = null;
 
+    this.setEnemySpawnerInstance = function(esi){
+        this.enemySpawnerInstance = esi;
+    }
     // should be called after the building phase
     this.DoneBuilding = function(){
-            // create the borders
-            this.drawCols(["GRAY"], 0,1,36,37,38,39);
-            this.drawRows(["GRAY"], 0,29);
+        // create the borders
+        this.drawCols(["GRAY"], 0,1,2,3, 30,31,32,33,34,35,36,37,38,39);
+        this.drawRows(["GRAY"], 0,1,28,29);
 
-            // put the code to build the player general base (flag)
-            this.drawingHouse = true;
-            this.drawIntervals('V', ["BRICK"], [17,20], [27,28]);
-            this.drawIntervals('H', ["BRICK"], [26], [17,20]);
-            this.drawingHouse = false;
-            /*
-            this.baseCollidersRef.push([17*2,26*2,"BRICK"], [17*2,27*2,"BRICK"], [17*2,28*2,"BRICK"],
-                                       [20,26,"BRICK"], [20,27,"BRICK"], [20,28,"BRICK"],
-                                   aw    [18,26,"BRICK"], [19,26,"BRICK"]);
-            */
-            this.createColliderForTiles();
+        // put the code to build the player general base (flag)
+        this.drawingHouse = true;
+        this.drawIntervals('V', ["BRICK"], [15,18], [26,27]);
+        this.drawIntervals('H', ["BRICK"], [25], [15,18]);
+        this.drawingHouse = false;
+        /*
+        this.baseCollidersRef.push([17*2,26*2,"BRICK"], [17*2,27*2,"BRICK"], [17*2,28*2,"BRICK"],
+                                   [20,26,"BRICK"], [20,27,"BRICK"], [20,28,"BRICK"],
+                               aw    [18,26,"BRICK"], [19,26,"BRICK"]);
+        */
+        this.createColliderForTiles();
     }
 
+    this.loadMap = function(){        
+        this.createMap();
+        var layer = stages[this.currentMap].layers[0];
+        this.enemySpawnerInstance.addEnemyList(stages[this.currentMap].enemies.slice(0));//clone
+        
+        var currentPos = 0;
+        for (var y=this.borders.top*2; y<this.size.y-this.borders.bottom*2; y+=2){
+            for (var x=this.borders.left*2; x<this.size.x-this.borders.right*2; x+=2 ){
+                //console.log(layer.data[currentPos++]-1);
+                var tile = this.tiles[tileNames[layer.data[currentPos++]-1]];                
+                if (tile != null)
+                    tile.putItselfInMap(this.map, y,x);                
+            }
+        }
+        
+        this.DoneBuilding();
+    }
+    
 
 
     this.enableSolidBase = function(time){
@@ -219,6 +244,8 @@ function Map(sizeX, sizeY){
         for (var line in this.map){
             this.map[line] = newArray(this.size.x,"NONE");
         }
+        
+        this.collisionInstance.clearStaticCollidersOfType("tile","invisible");
     };
     
     //this.setEnumTiles = function(args){

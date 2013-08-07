@@ -4,7 +4,7 @@ function Spawner(){
     this.maxEnemies = 4;
     this.queue = [];
     this.enemies = [];
-    this.spawnPos = [{x:2*16,y:1*16},{x:18*16,y:1*16},{x:34*16,y:1*16}];
+    this.spawnPos = [{x:4*16,y:2*16},{x:16*16,y:2*16},{x:28*16,y:2*16}];
     this.spawnCounter = 0;
     this.intervalId = 0;
     this.collisionInstance = null;
@@ -32,10 +32,13 @@ function Spawner(){
     this.addEnemyList = function(list){
         this.totalEnemies = list.length;
         this.queue = list;
+        clearInterval(this.intervalId);
         this.intervalId = setInterval((function(self) {            //Self-executing func which takes 'this' as self
                          return function() {    //Return a function in the context of 'self'
-                            if (self.enemies.length < self.maxEnemies)
+                            if (self.enemies.length < self.maxEnemies && self.queue.length>0){
                                 self.spawnEnemy();
+                                //console.log("spawnou ",self.queue.length);
+                            }
                          };
                      })(this),
                      3000 );
@@ -47,6 +50,15 @@ function Spawner(){
         this.explosionSpriteSheet = explosion;
         this.playerSpriteSheet = player;
         this.spawnSpriteSheet = spawn;
+    }
+    
+    this.allEnemiesDead = function(){
+        var enemiesDead =  (this.queue.length===0 && this.enemies.length===0);
+        //if (enemiesDead){
+        //     clearInterval(this.intervalId);
+        //}
+        
+        return enemiesDead;
     }
     
     this.setCollision = function(col){
@@ -66,7 +78,7 @@ function Spawner(){
             p = this.createBasicEnemy();            
         } else if (e===2){
             p = this.createBasicEnemy(); 
-            p.speed = 3.0;            
+            p.speed = 2.7;            
         } else if (e===3){
             p = this.createBasicEnemy();  
             p.bulletSpeed = 7.5;              

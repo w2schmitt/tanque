@@ -1,6 +1,6 @@
 function itemSpawner(){
     this.itemSpritesheet = null;
-    this.spawnArea = {x0:2*32,y0:1*32,x1:18*32,y1:14*32};
+    this.spawnArea = {x0:3*32,y0:2*32,x1:13*32,y1:13*32};
     this.allItems = [];
     this.collisionInstance;
     this.enemySpawner = null;
@@ -58,6 +58,9 @@ function itemSpawner(){
     }
 
     this.clearItems = function(){
+        for (var i in this.allItems){
+            this.removeCollider(this.allItems[i]);
+        }
         this.allItems.splice(0, this.allItems.length);
     }
     

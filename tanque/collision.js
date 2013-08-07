@@ -15,6 +15,16 @@ function Collision(){
         this.staticColliders.push({"i":info, "r":rect, "func":callback});
     }
 
+    this.clearStaticCollidersOfType = function(){
+        for (var i in arguments){
+            i = arguments[i];
+            for (var j=this.staticColliders.length-1; j>=0; j--){
+                if (this.staticColliders[j].i.type === i){
+                     this.staticColliders.splice(j,1);
+                }
+            }           
+        }
+    }
 
     
     this.removeDynamicCollider = function( obj ){

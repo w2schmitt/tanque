@@ -1,6 +1,6 @@
 
 function General(){
-	this.pos = {x:18*16, y:27*16};
+	this.pos = {x:16*16, y:26*16};
 	this.type = "general";
 	this.generalSpriteSheet = null;
 	this.explosionSpriteSheet = null;

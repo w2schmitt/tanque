@@ -4,7 +4,7 @@ function Player(){
     this.spawningPos = {x:16*6, y:16*6};
     this.posPrevious = {x:0,y:0};
     this.level = "";
-    this.lives = 4;  // number of lives the player can die;
+    this.lives = 5;  // number of lives the player can die;
     this.health = 1; // enemy healt
     this.maxLives = 1; // when lives pass the max lives the tank die (done this way to use the value lives in the animation)
     this.speed = 1.2;
@@ -25,7 +25,7 @@ function Player(){
     this.animationContext = null;
     this.currentDirection = this.direction.Up;
     this.currentCollisionFunc = this.defaultCollision;
-    this.fireCooldownTime = 0.35*1000; //in miliseconds
+    this.fireCooldownTime = 0.25*1000; //in miliseconds
     this.spawnTime = 1.5*1000; // in ms
     this.spawning = false;
     this.isShielded = false;
@@ -45,18 +45,23 @@ function Player(){
     this.collisionInstance = null;
 
     this.upgradeLevel = function(newLevel_opt){
+        if (newLevel_opt==="")return;
         this.level++;
         if (newLevel_opt != null) this.level = newLevel_opt;
         
         if (this.level>4) this.level=4;
+        this.doubleExplosionBullets = false;
+        this.breakSteel = false;
 
         if (this.level==1){
             this.bulletSpeed = 5;
             this.speed = 1.2;
+            this.maxBullets = 1;
         }
         if (this.level==2){
             this.bulletSpeed = 7.5;
             this.speed = 1.3;
+            this.maxBullets = 1;
         }
         if (this.level==3){
             players[0].bulletSpeed = 7.5;
@@ -71,6 +76,8 @@ function Player(){
             this.speed = 1.3;
         }
     }
+    
+    
     
     this.setItemSpawner = function(is){
         this.itemSpanwerInstance = is;
@@ -89,7 +96,7 @@ function Player(){
         setTimeout((function(self) {            //Self-executing func which takes 'this' as self
                          return function() {    //Return a function in the context of 'self'
                              self.spawning = false;
-                             if (self.type === "player") self.setShieldOn(1*3000);
+                             if (self.type === "player") self.setShieldOn(1*6000);
                              if (self.subsubtype === "special") self.itemSpanwerInstance.clearItems();
                          };
                      })(this),
@@ -250,6 +257,7 @@ function Player(){
             this.shieldSprite = null;
             //this.bullets = []; // erase all player bullets
             if (this.type==="player"){
+                this.lives--;
                 this.upgradeLevel(1);
                 this.spawnPlayer();
             } else {
@@ -259,6 +267,14 @@ function Player(){
                 //this.spawnerInstance.removeDeadEnemy(this);
             }
         }
+    }
+    
+    this.removeAllBullets = function(){
+        for (var i=this.bullets.length-1; i>=0; i--){
+            this.collisionInstance.removeDynamicCollider( this.bullets[i] );
+            this.bullets.splice(i,1);  
+        }
+
     }
     
     this.removeBullets = function(){

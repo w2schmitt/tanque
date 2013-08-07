@@ -45,9 +45,6 @@ function Bullet(x,y, sprite) {
         }
     }
 
-    this.getIntDirection = function(){
-
-    }
     
     this.defaultCollision = function(info, other){
         var self = info.obj;

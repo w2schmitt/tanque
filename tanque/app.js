@@ -10,6 +10,7 @@ function sketchProc(processing) {
         // initialize variables (called at start)
         processing.setup = function (){
             
+            startGame = 0;
             var resolution = {x:640,y:480}; // 20x15 tiles
             processing.size(resolution.x,resolution.y);   
             processing.frameRate(60);
@@ -33,12 +34,12 @@ function sketchProc(processing) {
             enemySpawner.setCollision(collision);
             enemySpawner.setItemSpawner(mItemSpawner);
             //normal tanks 1 to 4, special tanks 5 to 8
-            enemySpawner.addEnemyList([1,1,2,5,1,  4,3,3,2,7,  4,4,1,1,3,  1,1,8,4,4]);
+            //enemySpawner.addEnemyList();
 
             // Players
             players = [new Player()];
-            players[0].spawningPos = {x:16*15, y:16*27};
-            players[0].level=1;
+            players[0].spawningPos = {x:16*13, y:16*26};
+            players[0].upgradeLevel(4);
 
             for (var p in players){players[p].setCollisionInstance(collision);}
             
@@ -70,22 +71,23 @@ function sketchProc(processing) {
             // create map and pass the created tiles
             map1 = new Map(resolution.x, resolution.y);
             map1.setCollisionInstance(collision);
+            map1.setEnemySpawnerInstance(enemySpawner);
             map1.createTile(brick, steel, water, grass, snow, gray);
-            map1.createMap();
+            //map1.createMap();
             
 
             // build scenary 
-            map1.drawRows(["BRICK"], 16);
-            map1.drawRows(["GRASS","GRASS", "BRICK", "BRICK"],12,13, 23,24);
+            //map1.drawRows(["BRICK"], 16);
+            //map1.drawRows(["GRASS","GRASS", "BRICK", "BRICK"],12,13, 23,24);
 
-            map1.drawIntervals('V',["WATER", "GRASS", "STEEL"], [6,7, 10,11], [6,9], [11,20], [23,25]);
-            map1.drawIntervals('H',["STEEL"], [6,7], [12,20], [23,27]);
+            //map1.drawIntervals('V',["WATER", "GRASS", "STEEL"], [6,7, 10,11], [6,9], [11,20], [23,25]);
+            //map1.drawIntervals('H',["STEEL"], [6,7], [12,20], [23,27]);
             
-            map1.drawRects(["SNOW"], [32,14,5,9], [8,14,2,9]);
-            map1.drawPattern([["STEEL","GRASS","GRASS","STEEL"],
-                              ["STEEL","GRASS","GRASS","STEEL"]], 18,18);
+            //map1.drawRects(["SNOW"], [32,14,5,9], [8,14,2,9]);
+            //map1.drawPattern([["STEEL","GRASS","GRASS","STEEL"],
+            //                  ["STEEL","GRASS","GRASS","STEEL"]], 18,18);
                               
-            map1.DoneBuilding();
+            //map1.DoneBuilding();
             
             // sprites
             playerSpriteSheet = new SpriteSheet(loadImage("player_all.png"));
@@ -153,6 +155,7 @@ function sketchProc(processing) {
                         })(collision), 5 );
                       
 
+           
             //setInterval((function(col){return function(){col.computeCollisions();}}(collision), 100));
         };  // end setup
          
@@ -164,9 +167,34 @@ function sketchProc(processing) {
     // Override draw function, by default it will be called 60 times per second
     processing.draw = function() {
         with (this){
+            
+            if (startGame === 0) {  // put things that need to load only 1 time before the new stage starts
+                startGame++;
+                map1.currentMap = (map1.currentMap+1)%stages.length;
+                map1.loadMap();
+                players[0].spawnPlayer();
+                players[0].removeAllBullets();
+                setTimeout(function() { startGame++; }, 2500 );
+                      
+                return false;
+            } else if (startGame === 1){    //show Menu window
+                background(127,127,127);
+                textSize(30);        
+                text("level "+(map1.currentMap+1), 320-50, 240);
+                return false;
+            }
+            
+            // end stage
+            if (enemySpawner.allEnemiesDead() && startGame===2){
+                startGame++;
+                setTimeout(function() { startGame=0; }, 2500 );
+            }
+            
             // create an array containing enemies and players
             var allEntities = players.concat(enemies); 
-            gMenu.setNumberOfEnemies(enemySpawner.totalEnemies);           
+            gMenu.setNumberOfEnemies(enemySpawner.totalEnemies);      
+            gMenu.currentMap = map1.currentMap;
+            gMenu.numOflives = players[0].lives;
             
             //yes, it is safe to call this method in the loop, it will check if its already loaded
             if (playerSpriteSheet.loaded()){
@@ -238,7 +266,7 @@ function sketchProc(processing) {
                     itemSpriteSheet.setRectSprites([0,0,8,1],32,32, ["i0","i1","i2","i3","i4","i5", "blank", "500points"]);
                     
                     for (var i=0; i<=5; i++){
-                        itemSpriteSheet.setAnimation(["i"+i, "blank"], "item"+i, 3);
+                        itemSpriteSheet.setAnimation(["i"+i, "blank"], "item"+i, 8);
                     }
                 }                
             }else return false;
