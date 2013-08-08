@@ -317,10 +317,11 @@ function sketchProc(processing) {
                 var IA = enemies[e].input;
                 //IA MTO BOA:
                 //probability of change:
+                 IA.value.fire =  (Math.floor(random(50)) == 0);
                 if (random(25) < 1){
                     IA.value.x = 0;
                     IA.value.y = 0;
-                    IA.value.fire = true;//(Math.floor(random(3)) == 0);
+                   
                      //higher probability of vertical movement 
                     if (random(3) > 1){
                         //higher probability of going down
