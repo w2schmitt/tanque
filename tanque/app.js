@@ -39,7 +39,7 @@ function sketchProc(processing) {
             // Players
             players = [new Player()];
             players[0].spawningPos = {x:16*13, y:16*26};
-            players[0].upgradeLevel(4);
+            players[0].upgradeLevel();
 
             for (var p in players){players[p].setCollisionInstance(collision);}
             
@@ -211,11 +211,7 @@ function sketchProc(processing) {
                     playerSpriteSheet.setRectSprites( [4,0,4,1], 32,32, ["spawn1", "spawn2", "spawn3", "spawn4"]);
                     playerSpriteSheet.setRectSprites( [0,0,2,1], 32,32, ["shield1", "shield2"]);
                     playerSpriteSheet.setRectSprites( [2,0,2,1], 32,32, ["generalAlive", "generalDead"]);
-                    
-                    
-                  
 
-                    
                     playerSpriteSheet.setAnimation(["shield1", "shield2"], "shield", 25);
                     
                     playerSpriteSheet.setAnimation(["spawn4","spawn3","spawn2","spawn1","spawn2","spawn3","spawn4",
@@ -313,22 +309,33 @@ function sketchProc(processing) {
             
 
             // move IA
-            for (var e in enemies){                
+            for (var e in enemies){    
+                var enemy = enemies[e];
                 var IA = enemies[e].input;
                 //IA MTO BOA:
+                
+                IA.value.fire =  (Math.floor(random(30)) == 0);
+                 
                 //probability of change:
-                 IA.value.fire =  (Math.floor(random(50)) == 0);
-                if (random(25) < 1){
+                if (enemy.isColliding)
+                    enemy.probOfChangeDirection-=20;
+                    
+                if (random(enemy.probOfChangeDirection--) < 1){
+                    enemy.probOfChangeDirection=200;
                     IA.value.x = 0;
                     IA.value.y = 0;
-                   
-                     //higher probability of vertical movement 
-                    if (random(3) > 1){
+                        
+                    //higher probability of vertical movement 
+                    //console.log(random(3));
+                    if (random(3) > 1.25){
                         //higher probability of going down
-                        IA.value.y = (random (4) > 1)?1:-1 
+                        IA.value.y = 1;//(random (5) > 1)?1:0 
                     }else{
                         //same horizontam prob:
-                        IA.value.x = (random (2) > 1)?1:-1  
+                        if (random(5) > 1)
+                            IA.value.x = (random (2) > 1)?1:-1  
+                        else
+                            IA.value.y = -1;
                     }
                 }
                 /*if (random(25) < 1){
@@ -423,7 +430,7 @@ function sketchProc(processing) {
         
         
         processing.keyPressed = function(){ 
-          var all = players.concat(enemies);
+          var all = players;//.concat(enemies);
           for(var p in all){              
               input = all[p].input;
               if (input.keymap[keyCode] != null && !input.inputPressed[input.keymap[keyCode]]){
@@ -435,7 +442,7 @@ function sketchProc(processing) {
         };
         
         processing.keyReleased = function(){ 
-            var all = players.concat(enemies);
+            var all = players;//.concat(enemies);
             for(var p in all){
                 input = all[p].input;
                 if (input.keymap[keyCode] != null && input.inputPressed[input.keymap[keyCode]]){

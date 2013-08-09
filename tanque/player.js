@@ -41,8 +41,12 @@ function Player(){
     this.bullets = [];
     this.doubleExplosionBullets = false;
     this.breakSteel = false;
+    this.isColliding = false;
     
     this.collisionInstance = null;
+    
+    //only for enemies
+    this.probOfChangeDirection = 200;
 
     this.upgradeLevel = function(newLevel_opt){
         if (newLevel_opt==="")return;
@@ -145,7 +149,7 @@ function Player(){
                 var p = this.ignore[i];        
                 var pos = {x:(this.pos.x+16), y:(this.pos.y+16)}; // get the center pos
                 var pos2 = {x:(p.pos.x+16), y:(p.pos.y+16)};
-                if (Math.pow(pos.x-pos2.x,2) + Math.pow(pos.y-pos2.y,2) > 35*35){ //for not using sqrt
+                if (Math.pow(pos.x-pos2.x,2) + Math.pow(pos.y-pos2.y,2) > 40*40){ //for not using sqrt
                     this.ignore.splice(i,1);
                 }
             }
@@ -313,9 +317,11 @@ function Player(){
     this.defaultCollision = function(info, other){      // function that is called when this obj collides with something
         var self = info.obj;
         var gridSize = 16;
+        self.isColliding = false;
         if (other.type==="tile"  || other.type==="invisible" || other.type==="general"){
             info.obj.pos.y = Math.round((info.obj.pos.y )/gridSize)*gridSize;
             info.obj.pos.x = Math.round((info.obj.pos.x )/gridSize)*gridSize;  
+            self.isColliding = true;
         }
         if (other.type==="player" || other.type==="enemy" ){
             if (info.obj.input.value.x === 0 && info.obj.input.value.y===0) return; //boa

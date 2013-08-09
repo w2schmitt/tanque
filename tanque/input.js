@@ -9,6 +9,7 @@ function Input(){
     this.keyAttribute = {};
     this.value = this.keyAttribute; //alias for keyAttribute
     this.inputPressed = {};
+    this.lastValue = {};
     
     this.setKeyAttributes = function(obj){
         //this.keyAttribute = obj;
@@ -51,6 +52,12 @@ function Input(){
             this.inputPressed[this.actions[i]] = false;
         } 
     }
+    
+    this.setValue = function(attr,value){
+        this.lastValue[attr] = this.value[attr];
+        this.value[attr] = value;
+    }
+    
     //allInputs.push(this);
     this.clone=function(){
         var clonedInput = new Input();
