@@ -39,7 +39,7 @@ function sketchProc(processing) {
             // Players
             players = [new Player()];
             players[0].spawningPos = {x:16*13, y:16*26};
-            players[0].upgradeLevel();
+            players[0].upgradeLevel(4);
 
             for (var p in players){players[p].setCollisionInstance(collision);}
             
