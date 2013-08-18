@@ -110,7 +110,7 @@ function sketchProc(processing) {
                 input.setSpecialKey(DOWN,  actions.down);      input.setKey("S", actions.down);
                 input.setSpecialKey(RIGHT, actions.right);     input.setKey("D", actions.right);
                 input.setSpecialKey(LEFT,  actions.left);      input.setKey("A", actions.left);
-                input.setSpecialKey(ENTER, actions.fire);      input.setKey(" ", actions.fire);
+                input.setMouseButton(LEFT, actions.fire); input.setKey(" ", actions.fire);
                 
                 //Keybindings are the functions that are called ONCE on PHYSICAL key press (With no repeat from the OS) AND key release
                 //pressed = true -> key pressed; pressed = false -> key released
@@ -430,16 +430,37 @@ function sketchProc(processing) {
         }
       };
     
-    
+        processing.mousePressed = function(){
+            var all = players;//.concat(enemies);
+            for(var p in all){ 
+                input = all[p].input; 
+                if (input.keymap["MOUSE_"+mouseButton] != null && !input.inputPressed[input.keymap["MOUSE_"+mouseButton]]){
+                    
+                    input.inputPressed[input.keymap["MOUSE_"+mouseButton]] = true;
+                    input.keybindings[input.keymap["MOUSE_"+mouseButton]].apply(this,[input,true]);
+                }      
+            }         
+        }
+
+        processing.mouseReleased = function(){
+            var all = players;//.concat(enemies);
+            for(var p in all){ 
+                input = all[p].input; 
+                if (input.keymap["MOUSE_"+mouseButton] != null && input.inputPressed[input.keymap["MOUSE_"+mouseButton]]){
+                    input.inputPressed[input.keymap["MOUSE_"+mouseButton]] = false;
+                    input.keybindings[input.keymap["MOUSE_"+mouseButton]].apply(this,[input,false]);
+                }      
+            }         
+        }
         
         
         processing.keyPressed = function(){ 
-          var all = players;//.concat(enemies);
-          for(var p in all){              
-              input = all[p].input;
-              if (input.keymap[keyCode] != null && !input.inputPressed[input.keymap[keyCode]]){
-                input.inputPressed[input.keymap[keyCode]] = true;
-                input.keybindings[input.keymap[keyCode]].apply(this,[input,true]);
+            var all = players;//.concat(enemies);
+            for(var p in all){              
+                input = all[p].input;
+                if (input.keymap[keyCode] != null && !input.inputPressed[input.keymap[keyCode]]){
+                    input.inputPressed[input.keymap[keyCode]] = true;
+                    input.keybindings[input.keymap[keyCode]].apply(this,[input,true]);
             }              
           }
                

@@ -40,6 +40,10 @@ function Input(){
     this.setSpecialKey = function(key,action){
         this.keymap[key] = action;
     }
+    this.setMouseButton = function(mouse,action){
+        this.keymap["MOUSE_"+mouse] = action;
+        //console.log("MOUSE_"+mouse);
+    }
     this.getAction = function(action){
         return this.actions[action];
     }
