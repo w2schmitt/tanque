@@ -43,6 +43,9 @@ function Player(){
     this.doubleExplosionBullets = false;
     this.breakSteel = false;
     this.isColliding = false;
+
+    //this.playTankEngine = false;
+    //this.engineIdleSound = null;
     
     this.collisionInstance = null;
     
@@ -169,6 +172,11 @@ function Player(){
                 
             //eu nao consegui gravar porque isso aqui funcionou:
             if (this.input.value.x !== 0 ){
+                //gameSounds.engine.setVolume(80);
+               //gameSounds.engine.mute();
+                //if (this.type === "player")
+                    //gameSounds.engine.play();
+                    //(new buzz.sound("sounds/trucks005.wav")).play();
                 //this.pos.x += this.input.value.x*this.speed; 
                 this.currentSpeed.x = this.input.value.x*this.speed;
                 this.pos.x +=  this.currentSpeed.x;
@@ -176,16 +184,35 @@ function Player(){
                  //put him back on the grid:
                 this.pos.y = Math.round((this.pos.y )/gridSize)*gridSize;
             }else if (this.input.value.y !== 0){
+                 //gameSounds.engine.setVolume(80);
+                //gameSounds.engine.mute();
+                //if (this.type === "player")
+                //    gameSounds.engine.play();
+                    //(new buzz.sound("sounds/trucks005.wav")).play();
                 //this.pos.y += this.input.value.y*this.speed;
                 this.currentSpeed.y = this.input.value.y*this.speed;
                 this.pos.y +=  this.currentSpeed.y;
                 if (this.input.value.y > 0) this.currentDirection = this.direction.Down; else this.currentDirection = this.direction.Up;
                 //put him back on the grid:
                 this.pos.x = Math.round((this.pos.x )/gridSize)*gridSize;
-            } 
+            } else {
+                //if (!this.playTankEngine ){
+                //    setInterval( function(){(new buzz.sound("sounds/tank_idle4.wav")).setVolume(30).play();}, 900);
+                //    this.playTankEngine = true;
+                //}
+                //gameSounds.engine.setVolume(20);
+                //gameSounds.engine.play();
+                //gameSounds.engine.loop();
+                //gameSounds.engine.setTime(13);
+                //gameSounds.engine.unmute();
+            }
             
             // instantiate bullet
             if (this.input.value.fire === true && this.bullets.length < this.maxBullets && this.canFire){
+                if (this.type==="player"){
+                    //yes, it has to be this way
+                    (new buzz.sound("sounds/player_shot.wav")).play();
+                }
                 //console.log("Shooting");
                 if (this.bulletSpriteSheet){
                     this.canFire = false;
@@ -199,7 +226,6 @@ function Player(){
                     newbullet.owner = this;
                     this.bullets.push(newbullet);
                     this.collisionInstance.createDynamicCollider({obj:newbullet, type:newbullet.type ,w:16,h:16}, newbullet.defaultCollision);
-                    //relaoding:
                 
                     setTimeout((function(self) {         //Self-executing func which takes 'this' as self
                                      return function() {   //Return a function in the context of 'self'
@@ -273,13 +299,19 @@ function Player(){
             this.shieldSprite = null;
             //this.bullets = []; // erase all player bullets
             if (this.type==="player"){
+                (new buzz.sound("sounds/player_explode.wav")).play(); 
                 this.lives--;
                 this.upgradeLevel(1);
                 if (this.lives >= 0){
                     this.spawnPlayer();
                 }
             } else {
+                (new buzz.sound("sounds/enemy_explode.wav")).play(); 
                 this.removePlayer();
+            }
+        } else {
+            if (this.type != "player"){
+                 (new buzz.sound("sounds/hit_armor.wav")).play(); 
             }
         }
     }

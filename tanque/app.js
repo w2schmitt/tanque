@@ -2,12 +2,27 @@
 
 
 function sketchProc(processing) {
+
+    //buzz sound
+    gameSounds = {
+        gameStart:(new buzz.sound("sounds/Game_Start.mp3")),
+        gameOver:(new buzz.sound("sounds/Game_Over.mp3"))
+        //engine:(new buzz.sound("sounds/tank_idle.mp3"))
+        //highscore:(new buzz.sound("sounds/Game_Start.mp3")),
+        //playerShot:(new buzz.sound("sounds/player_shot.wav",{preload:true,loop:false,autoplay:true}))
+    };
+            
+
+    //gameSounds.engine.load();
+    //gameSounds.engine.setTime(14);
+
    
     with(processing){  // haha <--- Don't use with... CHUPA  
 
         // initialize variables (called at start)
         processing.setup = function (){
-            
+
+
             startGame = 0;
             var resolution = {x:640,y:480}; // 20x15 tiles
             processing.size(resolution.x,resolution.y);   
@@ -145,6 +160,7 @@ function sketchProc(processing) {
         with (this){
             
             if (startGame === 0) {  // put things that need to load only 1 time before the new stage starts
+                gameSounds.gameStart.play();
                 startGame++;
                 mItemSpawner.clearItems();
                 baseFlag.recreateFlag();
@@ -154,7 +170,7 @@ function sketchProc(processing) {
                 map1.loadMap();
                 players[0].spawnPlayer();
                 players[0].removeAllBullets();
-                setTimeout(function() { startGame=3; }, 3500 );
+                setTimeout(function() { startGame=3; }, 4200 );
                       
                 return false;
             } else if (startGame === 1){    //show Menu window
@@ -172,6 +188,7 @@ function sketchProc(processing) {
             }
 
             if ((players[0].lives < 0 || baseFlag.isDead) && startGame===3){
+                gameSounds.gameOver.play();
                 players[0].setShieldOff();// = false;
                 if (!baseFlag.isDead){                   
                     players[0].pos.x = 10000;
@@ -185,7 +202,7 @@ function sketchProc(processing) {
                                         players[0].lives = 4; 
                                         map1.currentMap = -1; 
                                         players[0].gamePoints = 0;  
-                                        players[0].upgradeLevel(1); }, 7000 );
+                                        players[0].upgradeLevel(1); }, 5000 );
             }
             
             // create an array containing enemies and players

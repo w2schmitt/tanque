@@ -40,6 +40,7 @@ function General(){
 	}
 
 	this.die = function(){
+		(new buzz.sound("sounds/player_explode.wav")).play();
 		this.isDead = true;
 		allExplosions.push(new Explosion(this.pos.x,this.pos.y, explosionSpriteSheet, "Big"));
 

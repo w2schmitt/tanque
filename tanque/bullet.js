@@ -101,7 +101,7 @@ function Bullet(x,y, sprite) {
         }
         
         this.explosionRect = r;
-        return {obj:{pos:this.explosionColliderInfo, breakSteel:this.breakSteel, currentSpeed:{x:0,y:0}}, type:"explosion" ,w:r.w, h:r.h};
+        return {obj:{pos:this.explosionColliderInfo, breakSteel:this.breakSteel, exploded:false, owner:this.owner, currentSpeed:{x:0,y:0}}, type:"explosion" ,w:r.w, h:r.h};
     }
     
     this.deafultExplosionCollision = function(info, other){

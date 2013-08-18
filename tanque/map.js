@@ -334,14 +334,23 @@ function Map(sizeX, sizeY){
     this.defaultCollision = function(info,other){
         var self = info.obj;
         if (other.type === "explosion"){
-            if (info.tile.isBreakable || (other.obj.breakSteel && info.subtype=="STEEL")){               
+
+            if (info.tile.isBreakable || (other.obj.breakSteel && info.subtype=="STEEL")){
+                if (other.obj.owner.type === "player" && !other.obj.exploded){
+                    (new buzz.sound("sounds/hit_brick.wav")).play();          
+                }
                 self.removeCollider(info.x, info.y, "tile");
                 //console.log("map", "x:", info.x, "y:",info.y);
                 self.map[info.y][info.x] = "NONE";                
                 //a block was destroyed, mark map check for invisible colliders
                 self.checkInvisibleColliders = true;
                 //if (self.isAroundSquareOfSameType("NONE", info.x, info.y);
+            } else {
+                if (other.obj.owner.type === "player" && !other.obj.exploded){
+                    (new buzz.sound("sounds/hit_wall.wav")).play();          
+                }
             }
+            other.obj.exploded = true;
         }
     };
 
