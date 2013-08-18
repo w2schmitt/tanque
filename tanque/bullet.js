@@ -48,13 +48,21 @@ function Bullet(x,y, sprite) {
     
     this.defaultCollision = function(info, other){
         var self = info.obj;
-        if (other.type === "tile"){
+        if (other.type === "tile" && !self.remove){
             if (!other.tile.bulletPassThrough){
+                if (self.owner.type==="player"){
+                    if (other.tile.isBreakable) {
+                        howlSounds.hitBrick.play();
+                    } else {
+                        howlSounds.hitWall.play();
+                    }
+                }
                 var gridSize = other.obj.tileSize;
                 self.remove = true;   
                 this.castExplosion = true; 
                 self.explosionColliderInfo = {x:(other.x*gridSize), y:(other.y*gridSize), w:other.tile.size.x, h:other.tile.size.y};
             }
+           
         }
         else if (other.type === "bullet" && (other.obj.owner.type !== self.owner.type)){
             self.remove = true;

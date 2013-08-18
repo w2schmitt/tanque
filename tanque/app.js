@@ -2,17 +2,23 @@
 
 
 function sketchProc(processing) {
-
-    //buzz sound
-    gameSounds = {
-        gameStart:(new buzz.sound("sounds/Game_Start.mp3")),
-        gameOver:(new buzz.sound("sounds/Game_Over.mp3"))
-        //engine:(new buzz.sound("sounds/tank_idle.mp3"))
-        //highscore:(new buzz.sound("sounds/Game_Start.mp3")),
-        //playerShot:(new buzz.sound("sounds/player_shot.wav",{preload:true,loop:false,autoplay:true}))
+     
+    loadedSounds=0;
+    howlSounds = {
+        numberOfSounds: 10,
+        gameStart: (new Howl({urls: ['sounds/Game_Start.mp3' ], onload:function(){loadedSounds++} })) ,
+        gameOver:  (new Howl({urls: ['sounds/Game_Over.mp3'  ], onload:function(){loadedSounds++} })) ,
+        playerShot:(new Howl({urls: ['sounds/player_shot.wav'], onload:function(){loadedSounds++} })) ,
+        hitBrick:  (new Howl({urls: ['sounds/hit_brick1.wav'], onload:function(){loadedSounds++} })) ,
+        hitWall:   (new Howl({urls: ['sounds/hit_wall.wav'], onload:function(){loadedSounds++} })) ,
+        hitArmor:  (new Howl({urls: ['sounds/hit_armor.wav'], onload:function(){loadedSounds++} })) ,
+        enemyExplosion: (new Howl({urls: ['sounds/enemy_explode.wav'], onload:function(){loadedSounds++} })) ,
+        playerExplosion: (new Howl({urls: ['sounds/player_explode.wav'], onload:function(){loadedSounds++} })) ,
+        spawnItem: (new Howl({urls: ['sounds/bonus_appear.wav'], onload:function(){loadedSounds++} })) ,
+        collectItem: (new Howl({urls: ['sounds/bonus_destroy.wav'], onload:function(){loadedSounds++} })) ,
+        //engineIdle: (new Howl({urls: ['sounds/tank_idle.wav'], loop:true, autoplay:true, onload:function(){loadedSounds++} })) 
     };
-            
-
+   
     //gameSounds.engine.load();
     //gameSounds.engine.setTime(14);
 
@@ -158,9 +164,15 @@ function sketchProc(processing) {
     // Override draw function, by default it will be called 60 times per second
     processing.draw = function() {
         with (this){
+
+            //loading sounds
+            if (howlSounds < howlSounds.numberOfSounds){
+                return false;
+            }
             
             if (startGame === 0) {  // put things that need to load only 1 time before the new stage starts
-                gameSounds.gameStart.play();
+                //gameSounds.gameStart.play();
+                howlSounds.gameStart.play();
                 startGame++;
                 mItemSpawner.clearItems();
                 baseFlag.recreateFlag();
@@ -188,7 +200,7 @@ function sketchProc(processing) {
             }
 
             if ((players[0].lives < 0 || baseFlag.isDead) && startGame===3){
-                gameSounds.gameOver.play();
+                howlSounds.gameOver.play();
                 players[0].setShieldOff();// = false;
                 if (!baseFlag.isDead){                   
                     players[0].pos.x = 10000;
@@ -211,6 +223,8 @@ function sketchProc(processing) {
             gMenu.setPlayerPoints(0,players[0].gamePoints);   
             gMenu.currentMap = map1.currentMap;
             gMenu.numOflives = players[0].lives;
+
+
             
             //yes, it is safe to call this method in the loop, it will check if its already loaded
             if (playerSpriteSheet.loaded()){

@@ -24,7 +24,8 @@ function itemSpawner(){
     }
     
     this.spawnItem = function(){
-        (new buzz.sound("sounds/bonus_appear.wav")).play();  
+        howlSounds.spawnItem.play();
+        //(new buzz.sound("sounds/bonus_appear.wav")).play();  
         this.clearItems();
         var pos = {x:0,y:0};
         var itemSubtype = Math.floor(Math.random()*6);
@@ -72,7 +73,8 @@ function itemSpawner(){
     this.defaultCollision = function(info,other){
         var self = info.obj;
         if (other.type === "player"){
-            (new buzz.sound("sounds/bonus_destroy.wav")).play();
+            howlSounds.collectItem.play();
+            //(new buzz.sound("sounds/bonus_destroy.wav")).play();
             other.obj.gamePoints += self.itemPoints;
             info.item.castEffect(other.obj, self.map, self.enemySpawner);
             self.removeItem(info.item);
