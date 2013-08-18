@@ -53,11 +53,7 @@ function Spawner(){
     }
     
     this.allEnemiesDead = function(){
-        var enemiesDead =  (this.queue.length===0 && this.enemies.length===0);
-        //if (enemiesDead){
-        //     clearInterval(this.intervalId);
-        //}
-        
+        var enemiesDead =  (this.queue.length===0 && this.enemies.length===0);        
         return enemiesDead;
     }
     
@@ -91,10 +87,12 @@ function Spawner(){
             p.subtype = e;
             p.points = e*100;
             p.subsubtype = subsubtype;
+            p.currentDirection = p.direction.Down;
             this.totalEnemies--; 
 
+
             if (this.freezingEnemies){
-                p.isFrozen = true;
+                p.freeze();
             }   
         }
     }
@@ -102,7 +100,7 @@ function Spawner(){
     this.freezeEnemies = function(time){
         this.freezingEnemies = true;
         for (var i in this.enemies){
-            this.enemies[i].isFrozen = true;
+            this.enemies[i].freeze();
         }
 
         setTimeout((function(self) {         //Self-executing func which takes 'this' as self
@@ -137,6 +135,13 @@ function Spawner(){
         
         return p;
     }
+
+    this.clearEnemies = function() {
+        for (var i in this.enemies){
+            this.enemies[i].removeAllBullets();
+            this.enemies[i].removePlayer();
+        }
+    }    
     
     this.getEnemyFromQueue = function(){
         return this.queue.splice(0,1)[0];

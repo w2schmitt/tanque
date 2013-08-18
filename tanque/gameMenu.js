@@ -7,6 +7,7 @@ function GameMenu(){
     this.numOfEnemies = 0;
     this.numOflives = 0;
     this.currentMap = 0;
+    this.playerPoints = [];
     
     this.setNumberOfEnemies = function(num){
         this.numOfEnemies = num;
@@ -14,6 +15,10 @@ function GameMenu(){
     
     this.setSpriteSheet = function(ss){
         this.spriteSheet = ss;
+    }
+
+    this.setPlayerPoints = function(player_i, points){
+        this.playerPoints[player_i] = points;
     }
     
     this.drawMenu = function(context){
@@ -39,7 +44,15 @@ function GameMenu(){
         context.image(this.spriteSheet.getSprite("playerIcon"),  this.player1Pos.x,  this.player1Pos.y, 16,16);
         context.text("P-1", 33.07*16, 15.7*16);
         context.text(this.numOflives, 34.25*16, 17*16);
+
+        // player points
+        context.textSize(20);
+        for (var i in this.playerPoints){      
+            context.fill(200,200,0)      
+            context.text("Score: "+this.playerPoints[i], 4*16, 1.5*16);
+        }
         
+        context.fill(0, 0, 0);
         // flag icon
         context.image(this.spriteSheet.getSprite("flagIcon"),  this.stageFlagPos.x,  this.stageFlagPos.y, 32,32);
        

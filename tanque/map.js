@@ -349,7 +349,14 @@ function Map(sizeX, sizeY){
         return (this.map[y][x] === type && this.map[y+1][x] === type && this.map[y][x+1] === type && this.map[y+1][x+1] === type);
     };
 
-   
-    
-    
+    this.isPositionsFreeForItem = function(x,y){
+        var tile1 = this.tiles[this.map[y][x]];
+        var tile2 = this.tiles[this.map[y+1][x]];
+        var tile3 = this.tiles[this.map[y][x+1]];
+        var tile4 = this.tiles[this.map[y+1][x+1]];
+
+        return (!tile1 || !tile2 ||!tile3 || !tile4) ||
+               (tile1.itemFree || tile1.itemFree || tile1.itemFree || tile1.itemFree)
+
+    }
 }

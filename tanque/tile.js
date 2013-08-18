@@ -9,6 +9,7 @@ function Tile(name, size, func){
     this.bulletPassThrough = false;
     this.hasCollider = true;
     this.postRendered = false;
+    this.itemFree = true;
     
     this.setSubTiles = function(subTiles){
         this.hasSubtiles = true;

@@ -4,9 +4,10 @@ function Player(){
     this.spawningPos = {x:16*6, y:16*6};
     this.posPrevious = {x:0,y:0};
     this.level = "";
-    this.lives = 5;  // number of lives the player can die;
+    this.lives = 4;  // number of lives the player can die;
     this.health = 1; // enemy healt
     this.maxLives = 1; // when lives pass the max lives the tank die (done this way to use the value lives in the animation)
+    this.gamePoints = 0;
     this.speed = 1.2;
     this.bulletSpeed = 5;
     this.type = "player";
@@ -46,7 +47,7 @@ function Player(){
     this.collisionInstance = null;
     
     //only for enemies
-    this.probOfChangeDirection = 200;
+    this.probOfChangeDirection = 300;
 
     this.upgradeLevel = function(newLevel_opt){
         if (newLevel_opt==="")return;
@@ -94,6 +95,7 @@ function Player(){
     this.spawnPlayer = function(){
         this.pos = {x: this.spawningPos.x, y: this.spawningPos.y};
         this.posPrevious = {x: this.spawningPos.x, y:this.spawningPos.y};
+        this.currentDirection = this.direction.Up;
         this.currentSpeed = {x:0,y:0};
         
         this.spawning = true;
@@ -109,13 +111,19 @@ function Player(){
     
     this.setShieldOn = function(time){
         this.isShielded = true;
+        //this.shieldSprite = this.spriteSheet.getSprite("shield");
         setTimeout((function(self) {         //Self-executing func which takes 'this' as self
                          return function() {   //Return a function in the context of 'self'
-                             self.isShielded = false;
+                             self.setShieldOff();// = false;
                          };
                      })(this),
                      time );
         
+    }
+
+    this.setShieldOff = function(){
+         this.isShielded = false;
+         this.shieldSprite = null;
     }
     
     //called each draw frame
@@ -141,15 +149,13 @@ function Player(){
         } else {     
             if (this.isShielded){
                 this.shieldSprite = this.spriteSheet.getSprite("shield");
-            } else {
-                this.shieldSprite = null;
-            }
+            } 
 
             for (var i=this.ignore.length-1; i>=0; i--){
                 var p = this.ignore[i];        
                 var pos = {x:(this.pos.x+16), y:(this.pos.y+16)}; // get the center pos
                 var pos2 = {x:(p.pos.x+16), y:(p.pos.y+16)};
-                if (Math.pow(pos.x-pos2.x,2) + Math.pow(pos.y-pos2.y,2) > 40*40){ //for not using sqrt
+                if (Math.pow(pos.x-pos2.x,2) + Math.pow(pos.y-pos2.y,2) > 38*38){ //for not using sqrt
                     this.ignore.splice(i,1);
                 }
             }
@@ -246,6 +252,12 @@ function Player(){
     this.freeze = function(){
         this.isFrozen = true;
     }
+
+    this.removePlayer = function(){
+        this.isDead = true;
+        this.currentSprite = null;
+        this.collisionInstance.removeDynamicCollider(this);
+    }
     
     this.die = function(optLives){
         //this.health++;
@@ -263,12 +275,11 @@ function Player(){
             if (this.type==="player"){
                 this.lives--;
                 this.upgradeLevel(1);
-                this.spawnPlayer();
+                if (this.lives >= 0){
+                    this.spawnPlayer();
+                }
             } else {
-                this.isDead = true;
-                this.currentSprite = null;
-                this.collisionInstance.removeDynamicCollider(this);
-                //this.spawnerInstance.removeDeadEnemy(this);
+                this.removePlayer();
             }
         }
     }
@@ -324,23 +335,24 @@ function Player(){
             self.isColliding = true;
         }
         if (other.type==="player" || other.type==="enemy" ){
-            if (info.obj.input.value.x === 0 && info.obj.input.value.y===0) return; //boa
-
-            var tile = {x:0,y:0};
-            tile.x = Math.floor(other.obj.pos.x+gridSize) - Math.floor(info.obj.pos.x+gridSize);
-            tile.y = Math.floor(other.obj.pos.y+gridSize) - Math.floor(info.obj.pos.y+gridSize);
-            
             // this dumb player walk inside the spawn of another player
             if (self.spawning) {
                 if (!contains(self.ignore, other.obj)) self.ignore.push(other.obj);
                 if (!contains(other.obj.ignore, self)) other.obj.ignore.push(self);
                 return;
             }
+
+            if (info.obj.input.value.x === 0 && info.obj.input.value.y===0) return; //boa
+
+            var tile = {x:0,y:0};
+            tile.x = Math.floor(other.obj.pos.x+gridSize) - Math.floor(info.obj.pos.x+gridSize);
+            tile.y = Math.floor(other.obj.pos.y+gridSize) - Math.floor(info.obj.pos.y+gridSize);
+            
+            
             
             if (contains(self.ignore, other.obj)) {
                 return;
-            }
-            
+            }            
             
             // if any of this is true, the obj should not be blocked
             if (tile.x <= -26 && (info.obj.currentSpeed.y !== 0 || info.obj.currentSpeed.x > 0)) return;

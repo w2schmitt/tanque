@@ -64,6 +64,7 @@ function Bullet(x,y, sprite) {
             if (self.owner !== other.obj && !other.obj.spawning){
                 self.remove = true;
                 self.setBulletExplosion(self.pos.x-8, self.pos.y-8);
+                self.owner.gamePoints += (other.obj.points || 0);
             }
             //console.log("teste");
         }

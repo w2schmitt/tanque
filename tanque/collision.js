@@ -11,7 +11,11 @@ function Collision(){
         this.dynamicColliders.push({"i":info, "func":callback});
     }
     
-    this.createStaticCollider = function(info,rect,callback){
+    this.createStaticCollider = function(info,rect,callback, offsetX, offsetY){
+        offsetX = offsetX || 0;
+        offsetY = offsetY || 0;
+        info["offx"] = offsetX;
+        info["offy"] = offsetY;
         this.staticColliders.push({"i":info, "r":rect, "func":callback});
     }
 
@@ -88,7 +92,8 @@ function Collision(){
                 if (!scol) continue;
                 dobj = dcol.i.obj;                
                 rect = {x:(dobj.pos.x+dcol.i.offx), y:(dobj.pos.y+dcol.i.offy), w:dcol.i.w, h:dcol.i.h };
-                if (this.overlap(rect,scol.r)){
+                srect = {x:(scol.r.x+scol.i.offx), y:(scol.r.y+scol.i.offy), w:scol.r.w, h:scol.r.h};
+                if (this.overlap(rect,srect)){
                     dcol.func(dcol.i, scol.i);
                     scol.func(scol.i,dcol.i);
                 }
@@ -142,7 +147,7 @@ function Collision(){
         
         for (var scol in this.staticColliders){
             scol = this.staticColliders[scol];
-            context.rect(scol.r.x , scol.r.y, scol.r.w, scol.r.h );
+            context.rect(scol.r.x + scol.i.offx , scol.r.y + scol.i.offy, scol.r.w, scol.r.h );
         }
         
     }

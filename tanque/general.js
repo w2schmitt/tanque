@@ -33,6 +33,12 @@ function General(){
                                         this.defaultCollision);
 	};
 
+	this.recreateFlag = function(){
+		if (this.isDead){
+			this.isDead=false;
+			this.createCollider();		}
+	}
+
 	this.die = function(){
 		this.isDead = true;
 		allExplosions.push(new Explosion(this.pos.x,this.pos.y, explosionSpriteSheet, "Big"));
