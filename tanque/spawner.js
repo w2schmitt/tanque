@@ -87,10 +87,8 @@ function Spawner(){
             p.subtype = e;
             p.points = e*100;
             p.subsubtype = subsubtype;
-            p.currentDirection = p.direction.Down;
+            p.spawningDirection = p.direction.Down;
             this.totalEnemies--; 
-
-
             if (this.freezingEnemies){
                 p.freeze();
             }   
@@ -129,7 +127,6 @@ function Spawner(){
         p.setCollisionInstance(this.collisionInstance);
         p.setInput(this.IAinput.clone()); 
 
-       
         p.spawnerInstance = this;
         this.enemies.push(p);
         

@@ -25,6 +25,7 @@ function Player(){
     this.direction = {Up:"Up",Right:"Right",Down:"Down",Left:"Left"};//fazendo dessa forma pq com o enum n tem garantia q vai ser string, e o nome dos sprites pode mudar no futuro
     this.animationContext = null;
     this.currentDirection = this.direction.Up;
+    this.spawningDirection = this.direction.Up;
     this.currentCollisionFunc = this.defaultCollision;
     this.fireCooldownTime = 0.25*1000; //in miliseconds
     this.spawnTime = 1.5*1000; // in ms
@@ -51,6 +52,8 @@ function Player(){
     
     //only for enemies
     this.probOfChangeDirection = 300;
+
+    //this.playEngineSound = false;
 
     this.upgradeLevel = function(newLevel_opt){
         if (newLevel_opt==="")return;
@@ -98,7 +101,7 @@ function Player(){
     this.spawnPlayer = function(){
         this.pos = {x: this.spawningPos.x, y: this.spawningPos.y};
         this.posPrevious = {x: this.spawningPos.x, y:this.spawningPos.y};
-        this.currentDirection = this.direction.Up;
+        this.currentDirection = this.spawningDirection;
         this.currentSpeed = {x:0,y:0};
         
         this.spawning = true;
@@ -131,6 +134,9 @@ function Player(){
     
     //called each draw frame
     this.update = function(){
+
+       
+        
         
         if (this.firstUpdate){
             this.spawnPlayer();
@@ -172,39 +178,20 @@ function Player(){
                 
             //eu nao consegui gravar porque isso aqui funcionou:
             if (this.input.value.x !== 0 ){
-                //howlSounds.engineIdle.mute();
-                //gameSounds.engine.setVolume(80);
-               //gameSounds.engine.mute();
-                //if (this.type === "player")
-                    //gameSounds.engine.play();
-                    //(new buzz.sound("sounds/trucks005.wav")).play();
-                //this.pos.x += this.input.value.x*this.speed; 
+
                 this.currentSpeed.x = this.input.value.x*this.speed;
                 this.pos.x +=  this.currentSpeed.x;
                 if (this.input.value.x > 0) this.currentDirection = this.direction.Right; else this.currentDirection = this.direction.Left;
                  //put him back on the grid:
                 this.pos.y = Math.round((this.pos.y )/gridSize)*gridSize;
             }else if (this.input.value.y !== 0){
-                //howlSounds.engineIdle.mute();
-                 //gameSounds.engine.setVolume(80);
-                //gameSounds.engine.mute();
-                //if (this.type === "player")
-                //    gameSounds.engine.play();
-                    //(new buzz.sound("sounds/trucks005.wav")).play();
-                //this.pos.y += this.input.value.y*this.speed;
+
                 this.currentSpeed.y = this.input.value.y*this.speed;
                 this.pos.y +=  this.currentSpeed.y;
                 if (this.input.value.y > 0) this.currentDirection = this.direction.Down; else this.currentDirection = this.direction.Up;
                 //put him back on the grid:
                 this.pos.x = Math.round((this.pos.x )/gridSize)*gridSize;
-            } else {
-                //howlSounds.engineIdle.unmute();
-                //if (!this.playTankEngine ){
-                //    setInterval( function(){(new buzz.sound("sounds/tank_idle4.wav")).setVolume(30).play();}, 900);
-                //    this.playTankEngine = true;
-                //}
             }
-            
             // instantiate bullet
             if (this.input.value.fire === true && this.bullets.length < this.maxBullets && this.canFire){
                 if (this.type==="player"){

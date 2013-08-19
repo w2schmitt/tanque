@@ -5,7 +5,7 @@ function sketchProc(processing) {
      
     loadedSounds=0;
     howlSounds = {
-        numberOfSounds: 10,
+        numberOfSounds: 11,
         gameStart: (new Howl({urls: ['sounds/Game_Start.mp3' ], onload:function(){loadedSounds++} })) ,
         gameOver:  (new Howl({urls: ['sounds/Game_Over.mp3'  ], onload:function(){loadedSounds++} })) ,
         playerShot:(new Howl({urls: ['sounds/player_shot.wav'], onload:function(){loadedSounds++} })) ,
@@ -16,8 +16,11 @@ function sketchProc(processing) {
         playerExplosion: (new Howl({urls: ['sounds/player_explode.wav'], onload:function(){loadedSounds++} })) ,
         spawnItem: (new Howl({urls: ['sounds/bonus_appear.wav'], onload:function(){loadedSounds++} })) ,
         collectItem: (new Howl({urls: ['sounds/bonus_destroy.wav'], onload:function(){loadedSounds++} })) ,
+        song: (new Howl({urls: ['sounds/song2.mp3'], loop:true, onload:function(){loadedSounds++} }))
+        //tankEngine: (new Howl({urls: ['sounds/player_engine2.mp3'], loop:true, buffer:true, onload:function(){ loadedSounds++} }))
         //engineIdle: (new Howl({urls: ['sounds/tank_idle.wav'], loop:true, autoplay:true, onload:function(){loadedSounds++} })) 
     };
+   
    
     //gameSounds.engine.load();
     //gameSounds.engine.setTime(14);
@@ -172,6 +175,7 @@ function sketchProc(processing) {
             
             if (startGame === 0) {  // put things that need to load only 1 time before the new stage starts
                 //gameSounds.gameStart.play();
+                howlSounds.song.stop();
                 howlSounds.gameStart.play();
                 startGame++;
                 mItemSpawner.clearItems();
@@ -182,7 +186,7 @@ function sketchProc(processing) {
                 map1.loadMap();
                 players[0].spawnPlayer();
                 players[0].removeAllBullets();
-                setTimeout(function() { startGame=3; }, 4200 );
+                setTimeout(function() { startGame=3; howlSounds.song.fadeIn(0.6,2000); }, 4200 );
                       
                 return false;
             } else if (startGame === 1){    //show Menu window
@@ -196,6 +200,7 @@ function sketchProc(processing) {
             // end stage
             if (enemySpawner.allEnemiesDead() && startGame===3){
                 startGame=4;
+                howlSounds.song.fadeOut(0,3000);
                 setTimeout(function() { startGame=0; }, 5000 );
             }
 
@@ -216,6 +221,8 @@ function sketchProc(processing) {
                                         players[0].gamePoints = 0;  
                                         players[0].upgradeLevel(1); }, 5000 );
             }
+
+
             
             // create an array containing enemies and players
             var allEntities = players.concat(enemies); 
@@ -350,7 +357,8 @@ function sketchProc(processing) {
                 if (enemy.isColliding)
                     enemy.probOfChangeDirection-=30;
                     
-                if (random(enemy.probOfChangeDirection--) < 1 && enemy.probOfChangeDirection<260){
+                if (random(enemy.probOfChangeDirection--) < 1 && enemy.probOfChangeDirection<260 || 
+                    (IA.value.x === 0 && IA.value.y === 0)){
                     enemy.probOfChangeDirection=300;
                     IA.value.x = 0;
                     IA.value.y = 0;

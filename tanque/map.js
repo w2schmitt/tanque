@@ -356,7 +356,9 @@ function Map(sizeX, sizeY){
         var tile3 = this.tiles[this.map[y][x+1]];
         var tile4 = this.tiles[this.map[y+1][x+1]];
 
-        return (!tile1 || !tile2 ||!tile3 || !tile4) ||
+        //console.log(tile1.name,tile2.name,tile3.name,tile4.name);
+
+        return (tile1 == undefined  || tile2 == undefined  || tile3 == undefined  || tile4 == undefined) ||
                (tile1.itemFree || tile1.itemFree || tile1.itemFree || tile1.itemFree)
 
     }
