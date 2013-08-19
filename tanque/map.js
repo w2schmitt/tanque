@@ -359,7 +359,7 @@ function Map(sizeX, sizeY){
         //console.log(tile1.name,tile2.name,tile3.name,tile4.name);
 
         return (tile1 == undefined  || tile2 == undefined  || tile3 == undefined  || tile4 == undefined) ||
-               (tile1.itemFree || tile1.itemFree || tile1.itemFree || tile1.itemFree)
+               (tile1.itemFree || tile2.itemFree || tile3.itemFree || tile4.itemFree)
 
     }
 }
