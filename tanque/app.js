@@ -16,7 +16,7 @@ function sketchProc(processing) {
         playerExplosion: (new Howl({urls: ['sounds/player_explode.wav'], onload:function(){loadedSounds++} })) ,
         spawnItem: (new Howl({urls: ['sounds/bonus_appear.wav'], onload:function(){loadedSounds++} })) ,
         collectItem: (new Howl({urls: ['sounds/bonus_destroy.wav'], onload:function(){loadedSounds++} })) ,
-        song: (new Howl({urls: ['sounds/song2.mp3'], loop:true, onload:function(){loadedSounds++} }))
+        song: (new Howl({urls: ['sounds/song2.mp3'], loop:true, buffer:true, onload:function(){loadedSounds++} }))
         //tankEngine: (new Howl({urls: ['sounds/player_engine2.mp3'], loop:true, buffer:true, onload:function(){ loadedSounds++} }))
         //engineIdle: (new Howl({urls: ['sounds/tank_idle.wav'], loop:true, autoplay:true, onload:function(){loadedSounds++} })) 
     };
