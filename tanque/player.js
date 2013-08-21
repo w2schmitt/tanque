@@ -212,7 +212,7 @@ function Player(){
             // instantiate bullet
             if (this.input.value.fire === true && this.bullets.length < this.maxBullets && this.canFire){
                 if (this.type==="player"){
-                    //howlSounds.playerShot.play();
+                    howlSounds.playerShot.play();
                 }
                 //console.log("Shooting");
                 if (this.bulletSpriteSheet){
