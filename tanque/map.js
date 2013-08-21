@@ -27,8 +27,10 @@ function Map(sizeX, sizeY){
     // should be called after the building phase
     this.DoneBuilding = function(){
         // create the borders
+        this.drawRows(["SNOW"], 27,26,25,24,23);
         this.drawCols(["GRAY"], 0,1,2,3, 30,31,32,33,34,35,36,37,38,39);
         this.drawRows(["GRAY"], 0,1,28,29);
+       
 
         // put the code to build the player general base (flag)
         this.drawingHouse = true;

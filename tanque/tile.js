@@ -6,6 +6,8 @@ function Tile(name, size, func){
     this.hasSubtiles = false;
     this.needInvisibleCollider = false;
     this.isBreakable = false;
+    this.isSlippery = false;
+    this.playerPassThrough = false;
     this.bulletPassThrough = false;
     this.hasCollider = true;
     this.postRendered = false;

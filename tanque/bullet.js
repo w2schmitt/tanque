@@ -17,7 +17,7 @@ function Bullet(x,y, sprite) {
     this.exploded = false;
     this.hit = false;
     this.breakSteel = false;
-    
+    howlSounds.playerShot.play();
     
     this.update = function(){
         this.pos.x += this.currentSpeed.x;

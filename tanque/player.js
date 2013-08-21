@@ -14,6 +14,7 @@ function Player(){
     this.subtype = 1;
     this.subsubtype = ""; // this tank carries an item
     this.currentSpeed = {x:0,y:0};
+    this.lastActiveSpeed = {x:0,y:0};
     this.input = {};
     this.spriteSheet = null;
     this.bulletSpriteSheet = null;
@@ -32,6 +33,9 @@ function Player(){
     this.spawning = false;
     this.isShielded = false;
     this.isFrozen = false;
+    this.isDrifting = false;  //http://bestanimatedgifs.files.wordpress.com/2012/12/170.gif
+    this.isDriftingTimeout = null;
+    this.driftCooldownTime = 250; //in miliseconds
     this.ignore = [];
     this.isDead = false;
     this.spawnerInstance = null;
@@ -137,7 +141,6 @@ function Player(){
 
        
         
-        
         if (this.firstUpdate){
             this.spawnPlayer();
             this.firstUpdate = false;
@@ -191,11 +194,25 @@ function Player(){
                 if (this.input.value.y > 0) this.currentDirection = this.direction.Down; else this.currentDirection = this.direction.Up;
                 //put him back on the grid:
                 this.pos.x = Math.round((this.pos.x )/gridSize)*gridSize;
+            }else {
+                //no input
+                if (this.isDrifting){
+                    this.pos.x +=  this.lastActiveSpeed.x;
+                    this.pos.y +=  this.lastActiveSpeed.y;
+                }
+            }
+            
+            
+        
+            if ( this.currentSpeed.x != 0 ||  this.currentSpeed.y != 0 ){
+                    this.lastActiveSpeed.x = this.currentSpeed.x;
+                    this.lastActiveSpeed.y = this.currentSpeed.y;
+                
             }
             // instantiate bullet
             if (this.input.value.fire === true && this.bullets.length < this.maxBullets && this.canFire){
                 if (this.type==="player"){
-                    howlSounds.playerShot.play();
+                    //howlSounds.playerShot.play();
                 }
                 //console.log("Shooting");
                 if (this.bulletSpriteSheet){
@@ -251,6 +268,9 @@ function Player(){
         if (this.isDead && this.bullets.length===0){
             this.spawnerInstance.removeDeadEnemy(this);
         }
+        
+        
+            
     };
     
     this.fireCoolDown=function(){
@@ -339,16 +359,45 @@ function Player(){
     };
     
     
+    this.startDrifting = function(){
+        if (this.input.value.x != 0 || this.input.value.y != 0){
+            this.isDrifting = true;
+            if (this.isDriftingTimeout != null){ 
+                clearTimeout(this.isDriftingTimeout);
+            }
+            
+            
+            this.isDriftingTimeout =  setTimeout((function(self) {       
+                                         return function() {   
+                                             self.stopDrifting();  
+                                         };
+                                     })(this),
+                                     this.driftCooldownTime );
+                                     
+                                
+            console.log("drifting");
+        }
+    };
+    
+    this.stopDrifting = function(){
+         console.log("stop drifting");
+         this.isDrifting = false;
+    }
+    
     // create a dynamic collider for the player, and a callback function that will execute when this collider hits something
     // the function has access to the object itself and the other object it collided.
     this.defaultCollision = function(info, other){      // function that is called when this obj collides with something
         var self = info.obj;
         var gridSize = 16;
         self.isColliding = false;
-        if (other.type==="tile"  || other.type==="invisible" || other.type==="general"){
+        if ((other.type==="tile" && !other.tile.playerPassThrough)  || other.type==="invisible" || other.type==="general"){
             info.obj.pos.y = Math.round((info.obj.pos.y )/gridSize)*gridSize;
             info.obj.pos.x = Math.round((info.obj.pos.x )/gridSize)*gridSize;  
             self.isColliding = true;
+        }
+        
+        if (other.type==="tile" &&  other.tile.isSlippery ){
+            info.obj.startDrifting();
         }
         if (other.type==="player" || other.type==="enemy" ){
             // this dumb player walk inside the spawn of another player

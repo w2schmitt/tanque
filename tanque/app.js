@@ -16,7 +16,7 @@ function sketchProc(processing) {
         playerExplosion: (new Howl({urls: ['sounds/player_explode.wav'], onload:function(){loadedSounds++} })) ,
         spawnItem: (new Howl({urls: ['sounds/bonus_appear.wav'], onload:function(){loadedSounds++} })) ,
         collectItem: (new Howl({urls: ['sounds/bonus_destroy.wav'], onload:function(){loadedSounds++} })) ,
-        song: (new Howl({urls: ['sounds/song2.mp3', 'sounds/song2.ogg'], loop:true, onload:function(){loadedSounds++} }))
+        song: (new Howl({urls: ['sounds/song2.mp3','sounds/song2.ogg'], buffer:true, loop:true, onload:function(){loadedSounds++} }))
         //tankEngine: (new Howl({urls: ['sounds/player_engine2.mp3'], loop:true, buffer:true, onload:function(){ loadedSounds++} }))
         //engineIdle: (new Howl({urls: ['sounds/tank_idle.wav'], loop:true, autoplay:true, onload:function(){loadedSounds++} })) 
     };
@@ -84,7 +84,9 @@ function sketchProc(processing) {
            
             var snow = new Tile("SNOW", {x:16,y:16});
             snow.bulletPassThrough = true;
-            snow.hasCollider = false;
+            snow.playerPassThrough = true;
+            snow.isSlippery = true;
+            //snow.hasCollider = false;
             
             var gray = new Tile("GRAY", {x:16,y:16});
             gray.itemFree = false;
@@ -175,7 +177,7 @@ function sketchProc(processing) {
             
             if (startGame === 0) {  // put things that need to load only 1 time before the new stage starts
                 //gameSounds.gameStart.play();
-                howlSounds.song.stop();
+                //howlSounds.song.stop();
                 howlSounds.gameStart.play();
                 startGame++;
                 mItemSpawner.clearItems();
@@ -186,7 +188,7 @@ function sketchProc(processing) {
                 map1.loadMap();
                 players[0].spawnPlayer();
                 players[0].removeAllBullets();
-                setTimeout(function() { startGame=3; howlSounds.song.fadeIn(0.6,2000); }, 4200 );
+                setTimeout(function() { startGame=3; /*howlSounds.song.fadeIn(0.6,2000);*/ }, 4200 );
                       
                 return false;
             } else if (startGame === 1){    //show Menu window
@@ -200,7 +202,7 @@ function sketchProc(processing) {
             // end stage
             if (enemySpawner.allEnemiesDead() && startGame===3){
                 startGame=4;
-                howlSounds.song.fadeOut(0,3000);
+                //howlSounds.song.fadeOut(0,3000);
                 setTimeout(function() { startGame=0; }, 5000 );
             }
 
