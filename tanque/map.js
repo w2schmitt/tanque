@@ -27,7 +27,7 @@ function Map(sizeX, sizeY){
     // should be called after the building phase
     this.DoneBuilding = function(){
         // create the borders
-        this.drawRows(["SNOW"], 27,26,25,24,23);
+        //this.drawRows(["SNOW"], 27,26,25,24,23);
         this.drawCols(["GRAY"], 0,1,2,3, 30,31,32,33,34,35,36,37,38,39);
         this.drawRows(["GRAY"], 0,1,28,29);
        
@@ -354,9 +354,9 @@ function Map(sizeX, sizeY){
 
     this.isPositionsFreeForItem = function(x,y){
         var tile1 = this.tiles[this.map[y][x]];
-        var tile2 = this.tiles[this.map[y+1][x]];
-        var tile3 = this.tiles[this.map[y][x+1]];
-        var tile4 = this.tiles[this.map[y+1][x+1]];
+        var tile2 = this.tiles[this.map[y+2][x]];
+        var tile3 = this.tiles[this.map[y][x+2]];
+        var tile4 = this.tiles[this.map[y+2][x+2]];
 
         //console.log(tile1.name,tile2.name,tile3.name,tile4.name);
 
