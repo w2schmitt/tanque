@@ -406,6 +406,7 @@ function Player(){
                 if (!contains(other.obj.ignore, self)) other.obj.ignore.push(self);
                 return;
             }
+            self.isColliding = true;
 
             if (info.obj.input.value.x === 0 && info.obj.input.value.y===0) return; //boa
 

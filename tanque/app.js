@@ -20,7 +20,8 @@ function sketchProc(processing) {
         //tankEngine: (new Howl({urls: ['sounds/player_engine2.mp3'], loop:true, buffer:true, onload:function(){ loadedSounds++} }))
         //engineIdle: (new Howl({urls: ['sounds/tank_idle.wav'], loop:true, autoplay:true, onload:function(){loadedSounds++} })) 
     };
-   
+    
+
    
     //gameSounds.engine.load();
     //gameSounds.engine.setTime(14);
@@ -162,9 +163,14 @@ function sketchProc(processing) {
             setInterval((function(col) {        
                          return function() { col.computeCollisions(); }; 
                         })(collision), 5 );
+                        
+                        
+            //Highscores handler
+            highscores = new Highscores(); 
+            highscores.bind("top10");
         };  // end setup
         
-
+    
     
     // Override draw function, by default it will be called 60 times per second
     processing.draw = function() {
@@ -206,7 +212,19 @@ function sketchProc(processing) {
                 setTimeout(function() { startGame=0; }, 5000 );
             }
 
+            //gameover
             if ((players[0].lives < 0 || baseFlag.isDead) && startGame===3){
+                
+                
+                function promptHighScoreAndSend(){
+                    var playerName = prompt("You made "+ players[0].gamePoints + " points!\nPlease enter your name","AAA");
+                    
+                    if (playerName!=null && playerName!=""){
+                        sendScore(players[0].gamePoints,playerName);
+                    }
+                }
+                
+                setTimeout(promptHighScoreAndSend,2000);
                 howlSounds.gameOver.play();
                 players[0].setShieldOff();// = false;
                 if (!baseFlag.isDead){                   
@@ -217,11 +235,26 @@ function sketchProc(processing) {
                 }
                
                 startGame=2;                
+                setTimeout(function() { startGame=5; }, 5000 );
                 setTimeout(function() { startGame=0; 
                                         players[0].lives = 4; 
                                         map1.currentMap = -1; 
                                         players[0].gamePoints = 0;  
-                                        players[0].upgradeLevel(1); }, 5000 );
+                                        players[0].upgradeLevel(1);}, 5000+8000 );
+            }
+            
+            //draw highscores
+            if (startGame===5){
+                //startGame=2;
+                background(127,127,127);
+                fill(255,255,255);
+                textSize(30);        
+                text("Highscores", 320-80, 100);
+                
+                highscores.refreshHighScore(false);
+                text(highscores.getAsText(10), 320-120, 140);
+                
+                return false;
             }
 
 
@@ -520,6 +553,21 @@ function sketchProc(processing) {
         
     } //with processing
 }
+
+
+// send player score to the server
+var sendScore = function(score,PlayerName) {
+    //console.log(score);
+    if (PlayerName == null) PlayerName = "AAA";
+    $.ajax({
+        url : "/send",
+        cache: false,
+        type: 'POST',
+        data: score.toString() + ","  + PlayerName,
+        success : function(result) {console.log("success")}
+    });
+    return false;            
+};
 
 
 var canvas = document.getElementById("lixo");

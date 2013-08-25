@@ -1,0 +1,68 @@
+<html>
+<head>
+
+<script src="http://code.jquery.com/jquery.js"></script> 
+
+
+<script type="text/javascript" >
+
+
+
+    function scoreComparator(a,b){
+        return  (b.score) - (a.score) ; //DESC
+        
+    }
+    
+    function parseHighscore(data){
+        var highscores = data.split("\n");
+        
+        var highscoresObject = [];
+        
+        for (var i in highscores){
+            var score = highscores[i];
+            if (score != ""){
+                highscoresObject.push({line:score , score:parseInt(score.split(",")[0]) , name:score.split(",")[1]   });
+            }
+        }
+        highscoresObject.sort(scoreComparator);
+        console.log(highscoresObject);
+        $("#top10").html("");
+        var highScoreTable = $("<table>");
+        for (var i = 0; i < 10 ; i ++){
+            //$("#top10").append( $("<p>").text( highscoresObject[i].score  + ": " + highscoresObject[i].name ));
+            
+            var tr = $("<tr>");
+            
+            tr.append($("<td>").addClass("scoreName").text(highscoresObject[i].name));
+            tr.append($("<td>").addClass("scoreNumber").text(highscoresObject[i].score));
+            highScoreTable.append(tr);
+            
+        }
+        
+         $("#top10").append(highScoreTable);
+    }
+    
+    function refreshHighScore(){
+        
+         $.ajax({
+            url : "/highscores.txt",
+            cache: false,
+            type: 'GET',
+            success : parseHighscore 
+        });
+        setTimeout( refreshHighScore, 1*60*1000); //refresh score every 1 minute
+    }
+
+     $(window).load(function(){ 
+       refreshHighScore();
+     });
+     
+     
+    
+</script> 
+</head>
+<body>
+    <div id="top10"> 
+    </div>
+</body>
+</html>

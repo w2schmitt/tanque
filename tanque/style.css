@@ -1,0 +1,36 @@
+body{
+    background:black;    
+}
+
+
+canvas {
+    float:left;
+    
+}
+#top10Container, #top10 table{
+    float:left;    
+    font-family:"Lucida Console", Monaco, monospace;
+    color:lime;
+    padding:10px;
+}
+
+ #top10 table td.scoreNumber{
+     
+     text-align:right;
+ }
+ 
+ #top10 table tr.scoreHeader td{
+     font-weight:bold;
+     border-bottom:2px solid lime;
+     
+     
+ }
+ 
+   #top10 table td {
+       padding:3px;
+       
+   }
+  #top10 table{
+      border-collapse:collapse;
+      margin:10px;
+  }
