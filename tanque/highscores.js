@@ -4,6 +4,7 @@ function Highscores(){
     this.refreshRate =  1*60*1000;
     this.bindedObj = null;
     this.highscores = [];
+    this.highscoresObject = [];
     this.bind = function(id){
         this.bindedObj =  $("#" + id);
     }
@@ -51,10 +52,16 @@ function Highscores(){
         }
     };
     
+    
+    this.parseHighscoreObject = function(data){
+        this.highscoresObject = data;
+        
+    }
+    
      this.refreshHighScore = function(setRefreshTimeout){
          if (setRefreshTimeout==null) setRefreshTimeout = true;
          $.ajax({
-            url : "/highscores.txt",
+            url : "/highscores",
             cache: false,
             type: 'GET',
             success : (function(self) {         //Self-executing func which takes 'this' as self
@@ -63,6 +70,19 @@ function Highscores(){
                                      };
                                 })(this) 
         });
+        
+        $.ajax({
+            url : "/getTop",
+            cache: false,
+            type: 'GET',
+            success : (function(self) {         //Self-executing func which takes 'this' as self
+                                     return function(data) {   //Return a function in the context of 'self'
+                                         self.parseHighscoreObject(data); //Thing you wanted to run as non-window 'this'
+                                     };
+                                })(this) 
+        });
+        
+        
         
         if (setRefreshTimeout)
             setTimeout( (function(self) {         //Self-executing func which takes 'this' as self

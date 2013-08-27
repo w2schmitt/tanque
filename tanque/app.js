@@ -251,7 +251,9 @@ function sketchProc(processing) {
                 textSize(30);        
                 text("Highscores", 320-80, 100);
                 
-                highscores.refreshHighScore(false);
+                
+                //Botei isso no callback do sendScore :)
+                //highscores.refreshHighScore(false);
                 text(highscores.getAsText(10), 320-120, 140);
                 
                 return false;
@@ -564,7 +566,7 @@ var sendScore = function(score,PlayerName) {
         cache: false,
         type: 'POST',
         data: score.toString() + ","  + PlayerName,
-        success : function(result) {console.log("success")}
+        success : function(result) {console.log("success");highscores.refreshHighScore(false);}
     });
     return false;            
 };

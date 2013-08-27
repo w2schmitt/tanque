@@ -1,1 +1,1 @@
-web: node tanque/helloWorld.js
+web: node helloWorld.js
