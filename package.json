@@ -4,5 +4,9 @@
   "dependencies": {
     "express": "x",
     "mongoose": "x"
+  },
+  "engines": {
+    "node": "x",
+    "npm":  "x"
   }
 }
