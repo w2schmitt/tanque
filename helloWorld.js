@@ -5,9 +5,12 @@ var db = null;
 var Score = null;
 
 try{
-    //start mongo with $./mongod
-    //throw new Error(); //skip mongo connection
-    db = mongoose.connect('mongodb://' + process.env.IP + '/my_database', function(err) {
+    //start mongo with $./mongod on c9
+    var mongoUri =  process.env.MONGOLAB_IP ||
+                    process.env.MONGOLAB_URI ||
+                    process.env.MONGOHQ_URL;
+    
+    db = mongoose.connect('mongodb://' + mongoUri + '/my_database', function(err) {
         if (err){
             db = null;
             Score = null;
@@ -99,7 +102,9 @@ app.post('/send', function(request, response) {
     response.send("ok");
 });
 
-app.listen(process.env.PORT , function() {
+console.log("Trying to listen on "+process.env.IP + ":" + process.env.PORT);
+
+app.listen(process.env.PORT , process.env.IP, function() {
     console.log("listening on "+process.env.PORT);
 });
 
